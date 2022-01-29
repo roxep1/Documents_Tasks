@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Documents&amp;Tasks</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="task_details_button">Подробнее</string>
+    <string name="tasks_screen_title">Задачи</string>
+    <string name="performers">Исполнители:</string>
+    <string name="complete_task_dialog_title">Сдать задачу</string>
 </resources>

@@ -13,6 +13,6 @@ fun MainScreenBody(navController: NavHostController) {
     Scaffold(
         bottomBar = { MainBottomNavigation(navController = bottomNavigationController) }
     ) {
-        CreateBottomNavHost(navController = bottomNavigationController)
+        CreateBottomNavHost(bottomBarNavController = bottomNavigationController, navController)
     }
 }
