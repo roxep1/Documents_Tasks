@@ -14,7 +14,7 @@ import com.bashkir.documentstasks.navigation.MainGraphs
 
 
 @Composable
-fun MainBottomNavigation(navController: NavController) =
+fun MainBottomNavigationView(navController: NavController) =
     BottomNavigation {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination

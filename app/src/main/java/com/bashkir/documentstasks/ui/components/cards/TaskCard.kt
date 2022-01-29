@@ -23,7 +23,7 @@ import com.bashkir.documentstasks.data.test.testTasksList1
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.cardShape
-import com.bashkir.documentstasks.ui.theme.grayText
+import com.bashkir.documentstasks.ui.theme.graySmallText
 import com.bashkir.documentstasks.ui.theme.titleText
 import com.bashkir.documentstasks.utils.formatToString
 
@@ -105,14 +105,14 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Row(modifier = Modifier) {
-                    Text(task.pubDate.formatToString(), style = grayText)
+                    Text(task.pubDate.formatToString(), style = graySmallText)
                     Spacer(modifier = Modifier.width(dimens.normalPadding))
-                    Text("Автор: ${task.author.name.fullName}", style = grayText)
+                    Text("Автор: ${task.author.name.fullName}", style = graySmallText)
                 }
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         "${stringResource(R.string.performers)} ${task.performers.count()}",
-                        style = grayText
+                        style = graySmallText
                     )
                     Icon(
                         painterResource(if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down),

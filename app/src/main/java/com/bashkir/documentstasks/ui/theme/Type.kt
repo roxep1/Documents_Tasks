@@ -32,9 +32,23 @@ val Typography = Typography(
     */
 )
 
-val grayText = TextStyle(
+val normalText = TextStyle(
+    fontSize = dimens.normalText
+)
+
+val smallText = TextStyle(
+    fontSize = dimens.smallText
+)
+
+val placeHolderText = TextStyle(
+    fontSize = dimens.normalText,
+    fontStyle = FontStyle.Italic,
+    color = Color.Gray
+)
+
+val graySmallText = TextStyle(
         color = Color.Gray,
-        fontSize = 12.sp
+        fontSize = dimens.smallText
     )
 
 val titleText = TextStyle(

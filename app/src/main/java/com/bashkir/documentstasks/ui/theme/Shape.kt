@@ -11,3 +11,5 @@ val Shapes = Shapes(
 )
 
 val cardShape = RoundedCornerShape(8.dp)
+
+val settingsCardShape = RoundedCornerShape(bottomStartPercent = 25, bottomEndPercent = 25)

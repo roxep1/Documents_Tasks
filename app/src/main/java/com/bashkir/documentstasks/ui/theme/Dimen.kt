@@ -11,7 +11,8 @@ class Dimensions(
     val titleText : TextUnit,
     val normalText : TextUnit,
     val articlePadding: Dp,
-    val cardMaxHeight: Dp
+    val smallText: TextUnit,
+    val smallPadding: Dp
 )
 
 val standardDimens = Dimensions(
@@ -20,5 +21,6 @@ val standardDimens = Dimensions(
     titleText = 16.sp,
     normalText = 14.sp,
     articlePadding = 5.dp,
-    cardMaxHeight = 100.dp
+    smallText = 12.sp,
+    smallPadding = 3.dp
 )

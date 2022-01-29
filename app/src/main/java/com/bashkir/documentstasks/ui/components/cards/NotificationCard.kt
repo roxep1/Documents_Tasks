@@ -52,7 +52,7 @@ fun NotificationCard(notification: Notifiable, onClick: (Int) -> Unit) = Card(
         )
         Spacer(Modifier.height(dimens.articlePadding))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(notification.time.formatToString(), style = grayText)
+            Text(notification.time.formatToString(), style = graySmallText)
             ClickableText(text = annotatedLinkString, onClick = onClick)
         }
 
