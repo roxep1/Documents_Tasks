@@ -1,4 +1,4 @@
-package com.bashkir.documentstasks.ui.components
+package com.bashkir.documentstasks.ui.components.cards
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,7 +17,7 @@ import com.bashkir.documentstasks.data.models.Notifiable
 import com.bashkir.documentstasks.data.test.testTask2
 import com.bashkir.documentstasks.ui.theme.*
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
-import com.bashkir.documentstasks.utils.formatToString
+import com.bashkir.documentstasks.utils.formatCutToString
 
 @Composable
 fun NotificationCardList(
@@ -52,7 +52,7 @@ fun NotificationCard(notification: Notifiable, onClick: (Int) -> Unit) = Card(
         )
         Spacer(Modifier.height(dimens.articlePadding))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(notification.time.formatToString(), style = graySmallText)
+            Text(notification.time.formatCutToString(), style = graySmallText)
             ClickableText(text = annotatedLinkString, onClick = onClick)
         }
 

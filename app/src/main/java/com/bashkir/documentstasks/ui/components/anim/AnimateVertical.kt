@@ -1,4 +1,4 @@
-package com.bashkir.documentstasks.ui.components
+package com.bashkir.documentstasks.ui.components.anim
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable

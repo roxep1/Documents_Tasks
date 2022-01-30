@@ -1,4 +1,4 @@
-package com.bashkir.documentstasks.ui.components
+package com.bashkir.documentstasks.ui.components.topbars
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
@@ -6,7 +6,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import com.bashkir.documentstasks.R

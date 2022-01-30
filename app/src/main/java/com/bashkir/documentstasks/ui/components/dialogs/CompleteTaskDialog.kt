@@ -1,4 +1,4 @@
-package com.bashkir.documentstasks.ui.components
+package com.bashkir.documentstasks.ui.components.dialogs
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog

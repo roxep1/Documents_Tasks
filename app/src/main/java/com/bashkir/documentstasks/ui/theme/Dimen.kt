@@ -12,7 +12,9 @@ class Dimensions(
     val normalText : TextUnit,
     val articlePadding: Dp,
     val smallText: TextUnit,
-    val smallPadding: Dp
+    val smallPadding: Dp,
+    val bottomNavHeight : Dp = 56.dp,
+    val maxListHeight : Dp
 )
 
 val standardDimens = Dimensions(
@@ -22,5 +24,6 @@ val standardDimens = Dimensions(
     normalText = 14.sp,
     articlePadding = 5.dp,
     smallText = 12.sp,
-    smallPadding = 3.dp
+    smallPadding = 3.dp,
+    maxListHeight = 300.dp
 )

@@ -18,9 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.ui.components.CompleteTaskDialog
+import com.bashkir.documentstasks.ui.components.dialogs.CompleteTaskDialog
 import com.bashkir.documentstasks.ui.components.ShowPerformers
-import com.bashkir.documentstasks.ui.components.TopBar
+import com.bashkir.documentstasks.ui.components.topbars.TopBar
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.titleText
 

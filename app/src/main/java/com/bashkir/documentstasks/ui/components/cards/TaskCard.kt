@@ -1,4 +1,4 @@
-package com.bashkir.documentstasks.ui.components
+package com.bashkir.documentstasks.ui.components.cards
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -20,12 +20,13 @@ import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.data.test.testTask1
 import com.bashkir.documentstasks.data.test.testTasksList1
+import com.bashkir.documentstasks.ui.components.ShowPerformers
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.cardShape
 import com.bashkir.documentstasks.ui.theme.graySmallText
 import com.bashkir.documentstasks.ui.theme.titleText
-import com.bashkir.documentstasks.utils.formatToString
+import com.bashkir.documentstasks.utils.formatCutToString
 
 @Composable
 fun TaskCardList(
@@ -79,7 +80,7 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        "Сдать до: ${task.deadline.formatToString()}",
+                        "Сдать до: ${task.deadline.formatCutToString()}",
                         style = titleText,
                         modifier = Modifier.align(CenterHorizontally)
                     )
@@ -105,7 +106,7 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Row(modifier = Modifier) {
-                    Text(task.pubDate.formatToString(), style = graySmallText)
+                    Text(task.pubDate.formatCutToString(), style = graySmallText)
                     Spacer(modifier = Modifier.width(dimens.normalPadding))
                     Text("Автор: ${task.author.name.fullName}", style = graySmallText)
                 }
