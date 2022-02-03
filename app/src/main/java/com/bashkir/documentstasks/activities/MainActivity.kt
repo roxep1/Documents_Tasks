@@ -7,7 +7,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import com.bashkir.documentstasks.navigation.CreateMainNavHost
+import com.airbnb.mvrx.compose.mavericksActivityViewModel
+import com.bashkir.documentstasks.ui.navigation.CreateMainNavHost
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,5 +24,8 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun StartMainActivity() = CreateMainNavHost(navController = rememberNavController())
+    private fun StartMainActivity() = CreateMainNavHost(
+        navController = rememberNavController(),
+        authViewModel = mavericksActivityViewModel()
+    )
 }

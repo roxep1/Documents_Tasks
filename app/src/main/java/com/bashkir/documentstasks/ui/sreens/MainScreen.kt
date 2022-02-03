@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.bashkir.documentstasks.navigation.CreateBottomNavHost
-import com.bashkir.documentstasks.navigation.MainGraphs
+import com.bashkir.documentstasks.ui.navigation.CreateBottomNavHost
+import com.bashkir.documentstasks.ui.navigation.MainNavGraphs
 import com.bashkir.documentstasks.ui.components.MainBottomNavigationView
 
 @Composable
@@ -16,7 +16,7 @@ fun MainScreenBody(navController: NavHostController) {
 
     val bottomNavigationController = rememberNavController()
     val floatingButtonState: MutableState<@Composable () -> Unit> = remember {
-        mutableStateOf({ MainGraphs.BottomNavGraph.MainFloatingButton(navController) })
+        mutableStateOf({ MainNavGraphs.BottomNavGraph.MainFloatingButton(navController) })
     }
 
     Scaffold(

@@ -2,23 +2,17 @@ package com.bashkir.documentstasks.ui.sreens.bottom
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.data.test.testTasksList1
-import com.bashkir.documentstasks.navigation.MainGraphs.MainGraph
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.cards.TaskCardList
 import com.bashkir.documentstasks.ui.components.cards.TaskFilterOption

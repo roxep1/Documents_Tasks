@@ -1,6 +1,6 @@
 package com.bashkir.documentstasks.data.models
 
-import com.bashkir.documentstasks.navigation.MainGraphs
+import com.bashkir.documentstasks.ui.navigation.MainNavGraphs
 import java.time.LocalDateTime
 
 data class Task(
@@ -16,5 +16,5 @@ data class Task(
     author,
     "новое задание",
     pubDate,
-    MainGraphs.MainGraph.TaskDetail.destinationWithArgument(id.toString())
+    MainNavGraphs.MainGraph.TaskDetail.destinationWithArgument(id.toString())
 )

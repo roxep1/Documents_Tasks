@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -38,7 +39,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.5.21'
     }
     packagingOptions {
         resources {
@@ -67,8 +67,36 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
     //Jetpack Compose Navigation
-    implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
+    implementation "androidx.navigation:navigation-compose:2.5.0-alpha01"
 
     //Jetpack Compose Date and Time Picker
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.6.3"
+
+    //Sign in with Google
+    implementation "com.google.android.gms:play-services-auth:20.0.1"
+
+    //Mavericks
+    implementation 'com.airbnb.android:mavericks:2.4.0'
+    implementation 'com.airbnb.android:mavericks-compose:2.1.0-alpha02'
+
+    //Koin
+    def koin_version = "3.1.2"
+    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
+
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //Room
+    def room_version = "2.4.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    //Corutines
+//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
 }

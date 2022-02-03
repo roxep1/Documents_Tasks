@@ -1,4 +1,4 @@
-package com.bashkir.documentstasks.navigation
+package com.bashkir.documentstasks.ui.navigation
 
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
@@ -9,35 +9,31 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.test.testTasksList1
-import com.bashkir.documentstasks.navigation.MainGraphs.BottomNavGraph
-import com.bashkir.documentstasks.navigation.MainGraphs.MainGraph
-import com.bashkir.documentstasks.ui.sreens.AddTaskScreenBody
-import com.bashkir.documentstasks.ui.sreens.MainScreenBody
-import com.bashkir.documentstasks.ui.sreens.NotificationsScreenBody
-import com.bashkir.documentstasks.ui.sreens.TaskDetailScreenBody
+import com.bashkir.documentstasks.ui.navigation.MainNavGraphs.BottomNavGraph
+import com.bashkir.documentstasks.ui.navigation.MainNavGraphs.MainGraph
+import com.bashkir.documentstasks.ui.sreens.*
 import com.bashkir.documentstasks.ui.sreens.bottom.ProfileScreenBody
 import com.bashkir.documentstasks.ui.sreens.bottom.TasksScreenBody
+import com.bashkir.documentstasks.viewmodels.AuthViewModel
 
-sealed class MainGraphs(val route: String) {
+sealed class MainNavGraphs {
 
-    object BottomNavGraph : MainGraphs("BottomNavScreen") {
-        sealed class Destination(val destination: String) {
+    object BottomNavGraph : MainNavGraphs() {
 
-            @Composable
-            abstract fun FloatingButton(navController: NavController)
+        val mainDestination: BottomNavDestination = Tasks
+        val destinations: List<BottomNavDestination> = listOf(Tasks, Profile)
 
-            @Composable
-            abstract fun Icon()
-        }
+        @Composable
+        fun MainFloatingButton(navController: NavController) = mainDestination.FloatingButton(
+            navController = navController
+        )
 
-        object Tasks : Destination("tasks") {
+        object Tasks : BottomNavDestination("tasks") {
             @Composable
             override fun FloatingButton(navController: NavController) =
                 ExtendedFloatingActionButton(
@@ -48,53 +44,45 @@ sealed class MainGraphs(val route: String) {
                     icon = { Icon(Icons.Default.Add, contentDescription = "add task button") })
 
             @Composable
-            override fun Icon() = Icon(painterResource(id = R.drawable.ic_tasks), contentDescription = null)
-
+            override fun Icon() =
+                Icon(painterResource(id = R.drawable.ic_tasks), contentDescription = null)
         }
 
-        object Profile : Destination("profile") {
-
+        object Profile : BottomNavDestination("profile") {
             @Composable
             override fun FloatingButton(navController: NavController) {}
 
             @Composable
             override fun Icon() = Icon(Icons.Default.Person, contentDescription = null)
         }
-
-        val mainDestination: Destination = Tasks
-        val destinations: List<Destination> = listOf(Tasks, Profile)
-
-        @Composable
-        fun MainFloatingButton(navController: NavController) = mainDestination.FloatingButton(
-            navController = navController
-        )
     }
 
-    object MainGraph : MainGraphs("mainGraph") {
-        object BottomNav : Destination("main_screen")
+    object MainGraph : MainNavGraphs() {
+        object BottomNav : Destination("main_screen", "userId")
         object TaskDetail : Destination("task_detail", "taskId")
         object Notifications : Destination("notifications")
         object AddTask : Destination("add_task")
+        object Auth : Destination("auth")
     }
 }
 
 @Composable
-fun CreateMainNavHost(navController: NavHostController) =
+fun CreateMainNavHost(navController: NavHostController, authViewModel: AuthViewModel) =
     NavHost(
         navController = navController,
-        startDestination = MainGraph.route
+        startDestination = MainGraph.Auth.destination
     ) {
-        mainGraph(navController)
-    }
+        composable(MainGraph.Auth.destination) {
+            AuthScreenBody(authViewModel, navController)
+        }
 
-private fun NavGraphBuilder.mainGraph(navController: NavHostController) =
-    navigation(MainGraph.BottomNav.destination, MainGraph.route) {
         composable(MainGraph.BottomNav.destination) {
             MainScreenBody(navController = navController)
         }
 
         composable(MainGraph.TaskDetail.destination) {
-            val taskId = MainGraph.TaskDetail.getArgument(it)?.toInt()
+            val taskId = MainGraph.TaskDetail.getIntArgument(it)
+
             TaskDetailScreenBody(
                 task = testTasksList1.find { task -> task.id == taskId }!!,
                 navController = navController
@@ -117,16 +105,13 @@ fun CreateBottomNavHost(
 ) =
     NavHost(
         navController = bottomBarNavController,
-        startDestination = BottomNavGraph.route
+        startDestination = BottomNavGraph.mainDestination.destination
     ) {
+        composable(BottomNavGraph.Tasks.destination) {
+            TasksScreenBody(navController = mainNavController)
+        }
 
-        navigation(BottomNavGraph.mainDestination.destination, BottomNavGraph.route) {
-            composable(BottomNavGraph.Tasks.destination) {
-                TasksScreenBody(navController = mainNavController)
-            }
-
-            composable(BottomNavGraph.Profile.destination){
-                ProfileScreenBody(navController = mainNavController)
-            }
+        composable(BottomNavGraph.Profile.destination) {
+            ProfileScreenBody(navController = mainNavController)
         }
     }

@@ -9,7 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import com.bashkir.documentstasks.R
-import com.bashkir.documentstasks.navigation.MainGraphs
+import com.bashkir.documentstasks.ui.navigation.MainNavGraphs
 
 @Composable
 fun TopBarBottomNav(
@@ -29,7 +29,7 @@ fun TopBarBottomNav(
 
 @Composable
 private fun NotificationsIcon(navController: NavController) =
-    IconButton(onClick = { navController.navigate(MainGraphs.MainGraph.Notifications.destination) }) {
+    IconButton(onClick = { navController.navigate(MainNavGraphs.MainGraph.Notifications.destination) }) {
         Icon(painterResource(R.drawable.ic_notifications), "notifications")
     }
 

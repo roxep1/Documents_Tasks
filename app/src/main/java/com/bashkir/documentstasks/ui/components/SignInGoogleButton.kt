@@ -18,9 +18,10 @@ import com.bashkir.documentstasks.R
 
 @Composable
 fun SignInGoogleButton(
+    modifier : Modifier = Modifier,
     onClick: () -> Unit
 ) = Surface(
-    modifier = Modifier
+    modifier = modifier
         .clickable(
             onClick = onClick
         ),
