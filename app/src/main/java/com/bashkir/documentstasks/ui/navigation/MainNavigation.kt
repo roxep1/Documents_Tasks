@@ -13,13 +13,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.bashkir.documentstasks.R
-import com.bashkir.documentstasks.data.test.testTasksList1
 import com.bashkir.documentstasks.ui.navigation.MainNavGraphs.BottomNavGraph
 import com.bashkir.documentstasks.ui.navigation.MainNavGraphs.MainGraph
 import com.bashkir.documentstasks.ui.sreens.*
 import com.bashkir.documentstasks.ui.sreens.bottom.ProfileScreenBody
 import com.bashkir.documentstasks.ui.sreens.bottom.TasksScreenBody
 import com.bashkir.documentstasks.viewmodels.AuthViewModel
+import com.bashkir.documentstasks.viewmodels.TasksViewModel
 
 sealed class MainNavGraphs {
 
@@ -50,7 +50,8 @@ sealed class MainNavGraphs {
 
         object Profile : BottomNavDestination("profile") {
             @Composable
-            override fun FloatingButton(navController: NavController) {}
+            override fun FloatingButton(navController: NavController) {
+            }
 
             @Composable
             override fun Icon() = Icon(Icons.Default.Person, contentDescription = null)
@@ -58,7 +59,7 @@ sealed class MainNavGraphs {
     }
 
     object MainGraph : MainNavGraphs() {
-        object BottomNav : Destination("main_screen", "userId")
+        object BottomNav : Destination("main_screen")
         object TaskDetail : Destination("task_detail", "taskId")
         object Notifications : Destination("notifications")
         object AddTask : Destination("add_task")
@@ -67,7 +68,11 @@ sealed class MainNavGraphs {
 }
 
 @Composable
-fun CreateMainNavHost(navController: NavHostController, authViewModel: AuthViewModel) =
+fun CreateMainNavHost(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    tasksViewModel: TasksViewModel
+) =
     NavHost(
         navController = navController,
         startDestination = MainGraph.Auth.destination
@@ -77,15 +82,16 @@ fun CreateMainNavHost(navController: NavHostController, authViewModel: AuthViewM
         }
 
         composable(MainGraph.BottomNav.destination) {
-            MainScreenBody(navController = navController)
+            MainScreenBody(navController = navController, tasksViewModel)
         }
 
         composable(MainGraph.TaskDetail.destination) {
             val taskId = MainGraph.TaskDetail.getIntArgument(it)
 
             TaskDetailScreenBody(
-                task = testTasksList1.find { task -> task.id == taskId }!!,
-                navController = navController
+                taskId = taskId!!,
+                navController = navController,
+                tasksViewModel
             )
         }
 
@@ -94,21 +100,22 @@ fun CreateMainNavHost(navController: NavHostController, authViewModel: AuthViewM
         }
 
         composable(MainGraph.AddTask.destination) {
-            AddTaskScreenBody(navController = navController)
+            AddTaskScreenBody(navController = navController, tasksViewModel)
         }
     }
 
 @Composable
 fun CreateBottomNavHost(
     bottomBarNavController: NavHostController,
-    mainNavController: NavHostController
+    mainNavController: NavHostController,
+    tasksViewModel: TasksViewModel
 ) =
     NavHost(
         navController = bottomBarNavController,
         startDestination = BottomNavGraph.mainDestination.destination
     ) {
         composable(BottomNavGraph.Tasks.destination) {
-            TasksScreenBody(navController = mainNavController)
+            TasksScreenBody(navController = mainNavController, tasksViewModel)
         }
 
         composable(BottomNavGraph.Profile.destination) {

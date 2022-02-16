@@ -10,21 +10,26 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.airbnb.mvrx.Async
+import com.airbnb.mvrx.compose.collectAsState
+import com.bashkir.documentstasks.data.models.PerformForm
+import com.bashkir.documentstasks.data.models.TaskForm
 import com.bashkir.documentstasks.data.models.User
+import com.bashkir.documentstasks.data.models.toForms
 import com.bashkir.documentstasks.data.test.testUserList1
+import com.bashkir.documentstasks.ui.components.AsyncView
 import com.bashkir.documentstasks.ui.components.cards.UserCard
 import com.bashkir.documentstasks.ui.components.dialogs.DatePickerDialog
 import com.bashkir.documentstasks.ui.components.dialogs.TimePickerDialog
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
-import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.graySmallText
 import com.bashkir.documentstasks.ui.theme.placeHolderText
 import com.bashkir.documentstasks.ui.theme.titleText
 import com.bashkir.documentstasks.utils.formatToString
+import com.bashkir.documentstasks.viewmodels.TasksState
+import com.bashkir.documentstasks.viewmodels.TasksViewModel
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.customView
@@ -33,7 +38,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Composable
-fun AddTaskScreenBody(navController: NavController) = Scaffold(topBar = {
+fun AddTaskScreenBody(navController: NavController, viewModel: TasksViewModel) = Scaffold(topBar = {
     TopBar(
         titleText = "Новое задание",
         navController = navController
@@ -47,6 +52,8 @@ fun AddTaskScreenBody(navController: NavController) = Scaffold(topBar = {
     val dateDialogState = rememberMaterialDialogState()
     val timeDialogState = rememberMaterialDialogState()
     val usersDialogState = rememberMaterialDialogState()
+
+    val users by viewModel.collectAsState(TasksState::users)
 
     fun taskIsValid(): Boolean = taskDeadLine.isAfter(LocalDateTime.now()) &&
             taskTitle.text.isNotBlank() && taskTitle.text.isNotEmpty()
@@ -87,7 +94,7 @@ fun AddTaskScreenBody(navController: NavController) = Scaffold(topBar = {
             taskDeadLine = taskDeadLine.plus(it)
         }
 
-        PerformerAddDialog(usersDialogState, taskPerformers)
+        PerformerAddDialog(usersDialogState, taskPerformers, users)
 
         PerformersList(performers = taskPerformers) {
             Row(Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -101,7 +108,14 @@ fun AddTaskScreenBody(navController: NavController) = Scaffold(topBar = {
 
         Button(
             onClick = {
-                //TODO
+                viewModel.addTask(
+                    TaskForm(
+                        taskTitle.text,
+                        taskDesc.text,
+                        taskDeadLine,
+                        taskPerformers.toForms().map { PerformForm(it) }
+                    )
+                )
             },
             Modifier
                 .fillMaxWidth()
@@ -177,22 +191,25 @@ private fun PerformersList(
 @Composable
 private fun PerformerAddDialog(
     dialogState: MaterialDialogState,
-    performers: SnapshotStateList<User>
+    addedPerformers: SnapshotStateList<User>,
+    allUsers: Async<List<User>>
 ) =
     MaterialDialog(dialogState = dialogState, buttons = {
         negativeButton("Отмена")
     }) {
         customView {
-            LazyColumn {
-                items(testUserList1.filter { !performers.contains(it) }) { user ->
-                    UserCard(
-                        Modifier
-                            .padding(top = dimens.articlePadding)
-                            .padding(horizontal = dimens.normalPadding),
-                        user = user
-                    ) {
-                        performers.add(user)
-                        dialogState.hide()
+            AsyncView(allUsers, "Не удалось загрузить пользователей") {
+                LazyColumn {
+                    items(it.filter { !addedPerformers.contains(it) }) { user ->
+                        UserCard(
+                            Modifier
+                                .padding(top = dimens.articlePadding)
+                                .padding(horizontal = dimens.normalPadding),
+                            user = user
+                        ) {
+                            addedPerformers.add(user)
+                            dialogState.hide()
+                        }
                     }
                 }
             }
@@ -202,9 +219,3 @@ private fun PerformerAddDialog(
 private fun LocalDateTime.plus(time: LocalTime): LocalDateTime =
     this.plusSeconds(time.second.toLong()).plusMinutes(time.minute.toLong())
         .plusHours(time.hour.toLong())
-
-@Preview
-@Composable
-private fun AddTaskScreenPreview() = DocumentsTasksTheme {
-    AddTaskScreenBody(navController = rememberNavController())
-}

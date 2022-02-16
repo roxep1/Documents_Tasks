@@ -14,7 +14,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.bashkir.documentstasks.data.models.Notifiable
-import com.bashkir.documentstasks.data.test.testTask2
 import com.bashkir.documentstasks.ui.theme.*
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.utils.formatCutToString
@@ -47,7 +46,7 @@ fun NotificationCard(notification: Notifiable, onClick: (Int) -> Unit) = Card(
         Modifier.padding(dimens.normalPadding)
     ) {
         Text(
-            "Пользователь ${notification.author.name.fullName} добавил ${notification.subject} для вас.",
+            "Пользователь ${notification.author.fullName} добавил ${notification.subject} для вас.",
             style = titleText
         )
         Spacer(Modifier.height(dimens.articlePadding))
@@ -66,10 +65,4 @@ private val annotatedLinkString = buildAnnotatedString {
     addStyle(
         style = linkText, start = 0, end = endIndex
     )
-}
-
-@Preview
-@Composable
-fun NotificationCardPreview() = DocumentsTasksTheme {
-    NotificationCard(notification = testTask2) {}
 }

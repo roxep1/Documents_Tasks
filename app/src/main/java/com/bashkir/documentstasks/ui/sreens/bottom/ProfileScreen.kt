@@ -25,7 +25,7 @@ fun ProfileScreenBody(navController: NavController) = Scaffold(
             style = titleText
         )
         Text(
-            testUser1.name.fullName,
+            testUser1.fullName,
             style = titleText,
             modifier = Modifier.padding(bottom = dimens.articlePadding)
         )

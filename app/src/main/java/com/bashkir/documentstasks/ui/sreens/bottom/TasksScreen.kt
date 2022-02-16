@@ -1,35 +1,38 @@
 package com.bashkir.documentstasks.ui.sreens.bottom
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.R
-import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.data.test.testTasksList1
+import com.bashkir.documentstasks.ui.components.AsyncView
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.cards.TaskCardList
 import com.bashkir.documentstasks.ui.components.cards.TaskFilterOption
 import com.bashkir.documentstasks.ui.components.cards.TaskFilterSettingsCard
 import com.bashkir.documentstasks.ui.components.topbars.TopBarBottomNav
-import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.utils.navigate
+import com.bashkir.documentstasks.viewmodels.TasksState
+import com.bashkir.documentstasks.viewmodels.TasksViewModel
 
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TasksScreenBody(
-    navController: NavController
+    navController: NavController,
+    viewModel: TasksViewModel
 ) {
+    OnCreate(viewModel = viewModel)
+
     val searchTextField = remember { mutableStateOf(TextFieldValue()) }
     val filterSettingsVisible = remember { mutableStateOf(false) }
     val taskFilterOption = remember { mutableStateOf(TaskFilterOption.ALL) }
+    val tasks by viewModel.collectAsState(TasksState::tasks)
 
     Scaffold(
         topBar = {
@@ -49,39 +52,27 @@ fun TasksScreenBody(
                 }
             )
         }) {
+        AsyncView(tasks, "Не удалось загрузить задачи") {
             TaskCardList(
-                onClick = {
-                    navController.navigate(it)
+                onClick = { task ->
+                    navController.navigate(task)
                 },
-                tasks = filterTasks(
-                    testTasksList1,
+                tasks = viewModel.filterTasks(
+                    it,
                     searchTextField.value.text,
                     taskFilterOption.value
                 )
             )
+        }
 
-            AnimateVertical(visible = filterSettingsVisible) {
-                TaskFilterSettingsCard(taskFilterOption)
-            }
+        AnimateVertical(visible = filterSettingsVisible) {
+            TaskFilterSettingsCard(taskFilterOption)
+        }
     }
 }
 
-private fun filterTasks(
-    tasks: List<Task>,
-    searchText: String,
-    filterOption: TaskFilterOption
-): List<Task> =
-    //TODO
-    tasks.filter { task ->
-        if (searchText.isNotBlank() && searchText.isNotEmpty())
-            task.title.contains(searchText) ||
-                    task.desc.contains(searchText)
-        else true
-    }
-
-@ExperimentalAnimationApi
-@Preview
 @Composable
-private fun TasksScreenBodyPreview() = DocumentsTasksTheme {
-    TasksScreenBody(navController = rememberNavController())
+private fun OnCreate(viewModel: TasksViewModel) = LaunchedEffect(viewModel) {
+    viewModel.getAllTasks()
+    viewModel.getAllUsers()
 }

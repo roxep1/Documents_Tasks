@@ -12,10 +12,8 @@ fun NavController.navigate(task: Task) =
         )
     )
 
-fun NavController.authNavigate(user: User) {
+fun NavController.authNavigate() {
     navigate(
-        MainNavGraphs.MainGraph.BottomNav.destinationWithArgument(
-            user.id
-        )
+        MainNavGraphs.MainGraph.BottomNav.destination
     )
 }

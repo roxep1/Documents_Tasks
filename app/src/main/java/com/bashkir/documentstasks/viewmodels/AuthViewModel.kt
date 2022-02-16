@@ -1,36 +1,38 @@
 package com.bashkir.documentstasks.viewmodels
 
 import android.content.Context
-import androidx.navigation.NavController
 import com.airbnb.mvrx.*
-import com.bashkir.documentstasks.data.models.User
-import com.bashkir.documentstasks.data.models.Username
-import com.bashkir.documentstasks.utils.authNavigate
+import com.bashkir.documentstasks.data.services.AuthService
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 
-class AuthViewModel(initialState: AuthState, private val context: Context) :
+class AuthViewModel(
+    initialState: AuthState,
+    private val context: Context,
+    private val service: AuthService
+) :
     MavericksViewModel<AuthState>(initialState) {
 
-    fun checkSignedIn() : User? {
+    fun checkSignedIn(): String? {
         GoogleSignIn.getLastSignedInAccount(context)?.let {
-            setUser(it)
-            return it.toUser()
+            setSignedUserId(it)
+            return it.id
         }
         return null
     }
 
-    fun setLoading() = setState { copy(user = Loading()) }
+    fun setLoading() = setState { copy(userId = Loading()) }
 
-    fun setFailed(e: Throwable = Throwable()) = setState { copy(user = Fail(e)) }
+    fun setFailed(e: Throwable = Throwable()) = setState { copy(userId = Fail(e)) }
 
-    fun setUser(account: GoogleSignInAccount) = setState { copy(user = Success(account.toUser())) }
+    fun setSignedUserId(account: GoogleSignInAccount) = setSignedUserId(account.id!!)
 
-    private fun GoogleSignInAccount.toUser(): User =
-        User(id!!, Username(givenName!!, familyName!!), email!!)
+    fun setSignedUserId(id: String) = suspend {
+        service.authorizeUser(id)
+    }.execute { copy(userId = it)  }
 
     companion object : MavericksViewModelFactory<AuthViewModel, AuthState>, KoinComponent {
         override fun create(viewModelContext: ViewModelContext, state: AuthState): AuthViewModel =
@@ -40,5 +42,5 @@ class AuthViewModel(initialState: AuthState, private val context: Context) :
 
 
 data class AuthState(
-    val user: Async<User> = Uninitialized
+    val userId: Async<String> = Uninitialized
 ) : MavericksState

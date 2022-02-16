@@ -18,6 +18,13 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation":
+                                      "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -55,7 +62,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
     implementation 'androidx.activity:activity-compose:1.4.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -67,17 +74,17 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
     //Jetpack Compose Navigation
-    implementation "androidx.navigation:navigation-compose:2.5.0-alpha01"
+    implementation "androidx.navigation:navigation-compose:2.5.0-alpha02"
 
     //Jetpack Compose Date and Time Picker
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.6.3"
 
     //Sign in with Google
-    implementation "com.google.android.gms:play-services-auth:20.0.1"
+    implementation "com.google.android.gms:play-services-auth:20.1.0"
 
     //Mavericks
-    implementation 'com.airbnb.android:mavericks:2.4.0'
-    implementation 'com.airbnb.android:mavericks-compose:2.1.0-alpha02'
+    implementation 'com.airbnb.android:mavericks:2.6.0'
+    implementation 'com.airbnb.android:mavericks-compose:2.6.0'
 
     //Koin
     def koin_version = "3.1.2"

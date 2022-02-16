@@ -18,9 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.data.test.testTask1
-import com.bashkir.documentstasks.data.test.testTasksList1
-import com.bashkir.documentstasks.ui.components.ShowPerformers
+import com.bashkir.documentstasks.ui.components.ShowPerformersView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.cardShape
@@ -108,11 +106,11 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                 Row(modifier = Modifier) {
                     Text(task.pubDate.formatCutToString(), style = graySmallText)
                     Spacer(modifier = Modifier.width(dimens.normalPadding))
-                    Text("Автор: ${task.author.name.fullName}", style = graySmallText)
+                    Text("Автор: ${task.author.fullName}", style = graySmallText)
                 }
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
-                        "${stringResource(R.string.performers)} ${task.performers.count()}",
+                        "${stringResource(R.string.performers)} ${task.performs.count()}",
                         style = graySmallText
                     )
                     Icon(
@@ -122,7 +120,7 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                 }
             }
             if (isExpanded) {
-                task.performers.ShowPerformers()
+                task.performs.ShowPerformersView()
                 OutlinedButton(
                     onClick = onClick,
                     modifier = Modifier
@@ -139,16 +137,4 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun TaskCardPreview() = TaskCard(
-    task = testTask1
-) {}
-
-@Preview
-@Composable
-private fun TaskCardListPreview() = DocumentsTasksTheme {
-    TaskCardList(testTasksList1, onClick = {})
 }

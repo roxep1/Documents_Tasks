@@ -27,7 +27,7 @@ fun UserCard(modifier: Modifier = Modifier, user: User, onClick: (() -> Unit)? =
         shape = cardShape
     ) {
         Column(Modifier.padding(dimens.normalPadding)) {
-            Text(user.name.fullName, style = titleText)
+            Text(user.fullName, style = titleText)
             Spacer(Modifier.height(dimens.articlePadding))
             Text(user.email, style = normalText)
         }

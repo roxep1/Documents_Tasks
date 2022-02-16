@@ -8,38 +8,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import com.bashkir.documentstasks.data.models.Status
+import com.bashkir.documentstasks.data.models.Perform
+import com.bashkir.documentstasks.data.models.PerformStatus
 import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 
 @Composable
-fun Map<User, Status>.ShowPerformers() =
-    this.forEach { (user, status) ->
+fun List<Perform>.ShowPerformersView() =
+    forEach { perform ->
         Row(
             modifier = Modifier
                 .padding(top = DocumentsTasksTheme.dimens.normalPadding)
                 .fillMaxWidth()
         ) {
             Text(
-                user.name.fullName,
+                perform.user.fullName,
                 Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically)
             )
             Text(
-                user.email,
+                perform.user.email,
                 Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically),
                 textAlign = TextAlign.Center
             )
             Text(
-                status.text,
+                perform.status.text,
                 Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically),
                 textAlign = TextAlign.Center,
-                style = status.textStyle
+                style = perform.status.textStyle
             )
         }
     }

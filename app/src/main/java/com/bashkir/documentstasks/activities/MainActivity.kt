@@ -24,8 +24,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun StartMainActivity() = CreateMainNavHost(
-        navController = rememberNavController(),
-        authViewModel = mavericksActivityViewModel()
-    )
+    private fun StartMainActivity() =
+        CreateMainNavHost(
+            navController = rememberNavController(),
+            authViewModel = mavericksActivityViewModel(),
+            tasksViewModel = mavericksActivityViewModel()
+        )
 }

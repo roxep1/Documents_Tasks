@@ -1,6 +1,5 @@
 package com.bashkir.documentstasks.ui.sreens
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,12 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
@@ -24,7 +21,6 @@ import com.airbnb.mvrx.Fail
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.compose.collectAsState
-import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.google.GoogleApiContract
 import com.bashkir.documentstasks.ui.components.LoadingScreen
 import com.bashkir.documentstasks.ui.components.SignInGoogleButton
@@ -45,13 +41,18 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
     ) {
 
         val signInRequestCode = 1
-        val user by viewModel.collectAsState(AuthState::user)
+        val userId by viewModel.collectAsState(AuthState::userId)
         val (button, errorText) = createRefs()
 
-        LaunchedEffect(true){
-            viewModel.checkSignedIn()?.let{
-                navController.authNavigate(it)
+        LaunchedEffect(true) {
+            viewModel.checkSignedIn()?.let {
+                viewModel.setSignedUserId(it)
             }
+        }
+
+        LaunchedEffect(userId) {
+            if (userId is Success)
+                navController.authNavigate()
         }
 
         val authResultLauncher =
@@ -62,11 +63,11 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
                 )
             }
 
-        if (user is Loading)
+        if (userId is Loading)
             LoadingScreen()
         else {
-            if (user is Fail)
-                ErrorText(ref = errorText, authButton = button, fail = user as Fail)
+            if (userId is Fail)
+                ErrorText(ref = errorText, authButton = button, fail = userId as Fail)
 
             AuthButton(ref = button) {
                 viewModel.setLoading()
@@ -90,26 +91,25 @@ private fun ConstraintLayoutScope.AuthButton(
     onClick = onClick
 )
 
-private fun onSignInResult(task: Task<GoogleSignInAccount>?, viewModel: AuthViewModel) {
+private fun onSignInResult(task: Task<GoogleSignInAccount>?, viewModel: AuthViewModel) =
     try {
         val account = task?.getResult(ApiException::class.java)
         if (account != null) {
-            viewModel.setUser(account)
+            viewModel.setSignedUserId(account)
         } else {
             viewModel.setFailed()
         }
     } catch (e: ApiException) {
         viewModel.setFailed(e)
     }
-}
 
 @Composable
 private fun ConstraintLayoutScope.ErrorText(
     ref: ConstrainedLayoutReference,
     authButton: ConstrainedLayoutReference,
-    fail: Fail<User>
+    fail: Fail<*>
 ) = Text(
-    "Авторизация неудалась ${fail.error.message?.let { "($it)" }}",
+    "Авторизация не удалась ${fail.error.message?.let { "($it)" }}",
     style = titleText,
     color = Color.Red,
     modifier = Modifier
