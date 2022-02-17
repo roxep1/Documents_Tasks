@@ -20,7 +20,7 @@ import com.bashkir.documentstasks.ui.theme.placeHolderText
 import com.bashkir.documentstasks.ui.theme.smallText
 
 @Composable
-fun SearchView(searchTextState: MutableState<TextFieldValue>) =
+fun SearchTextField(searchTextState: MutableState<TextFieldValue>) =
     OutlinedTextField(
         modifier = Modifier
             .padding(

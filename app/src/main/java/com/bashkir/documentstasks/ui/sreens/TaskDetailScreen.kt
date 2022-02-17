@@ -19,7 +19,7 @@ import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.ui.components.ErrorView
 import com.bashkir.documentstasks.ui.components.LoadingScreen
-import com.bashkir.documentstasks.ui.components.ShowPerformersView
+import com.bashkir.documentstasks.ui.components.PerformersView
 import com.bashkir.documentstasks.ui.components.dialogs.CompleteTaskDialog
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
@@ -40,7 +40,7 @@ fun TaskDetailScreenBody(taskId: Int, navController: NavController, viewModel: T
             is Success -> {
                 val task = tasks()!![taskId]
                 title = task.title
-                TaskDetailView(task = task)
+                TaskDetailView(task = task, viewModel)
             }
             is Loading -> LoadingScreen()
             is Fail -> ErrorView("Не удалось загрузить задачи", tasks as Fail<*>)
@@ -51,7 +51,7 @@ fun TaskDetailScreenBody(taskId: Int, navController: NavController, viewModel: T
 }
 
 @Composable
-private fun TaskDetailView(task: Task) =
+private fun TaskDetailView(task: Task, viewModel: TasksViewModel) =
     Column(
         Modifier
             .padding(dimens.normalPadding)
@@ -63,7 +63,7 @@ private fun TaskDetailView(task: Task) =
         Spacer(modifier = Modifier.height(dimens.normalPadding))
         Text(stringResource(R.string.performers), style = titleText)
         Spacer(modifier = Modifier.height(dimens.articlePadding))
-        task.performs.ShowPerformersView()
+        task.performs.PerformersView()
         OutlinedButton(
             modifier = Modifier
                 .padding(dimens.normalPadding)
@@ -71,5 +71,7 @@ private fun TaskDetailView(task: Task) =
             onClick = { openDialog.value = true }) {
             Text("Сдать задачу")
         }
-        CompleteTaskDialog(openDialogState = openDialog, task = task)
+        CompleteTaskDialog(openDialogState = openDialog, task = task){
+
+        }
     }

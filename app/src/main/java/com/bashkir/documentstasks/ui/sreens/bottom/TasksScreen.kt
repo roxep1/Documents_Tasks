@@ -1,21 +1,23 @@
 package com.bashkir.documentstasks.ui.sreens.bottom
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
-import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.ui.components.AsyncView
+import com.bashkir.documentstasks.ui.components.TasksFloatingButton
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.cards.TaskCardList
 import com.bashkir.documentstasks.ui.components.cards.TaskFilterOption
 import com.bashkir.documentstasks.ui.components.cards.TaskFilterSettingsCard
-import com.bashkir.documentstasks.ui.components.topbars.TopBarBottomNav
+import com.bashkir.documentstasks.ui.components.topbars.TopBarTasks
+import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.utils.navigate
 import com.bashkir.documentstasks.viewmodels.TasksState
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
@@ -35,25 +37,12 @@ fun TasksScreenBody(
     val tasks by viewModel.collectAsState(TasksState::tasks)
 
     Scaffold(
-        topBar = {
-            TopBarBottomNav(
-                navController = navController,
-                searchTextFieldValue = searchTextField,
-                actions = {
-                    IconButton(onClick = {
-                        filterSettingsVisible.value = !filterSettingsVisible.value
-                    }) {
-                        Icon(
-                            if (filterSettingsVisible.value) painterResource(R.drawable.ic_arrow_up)
-                            else painterResource(R.drawable.ic_arrow_down),
-                            ""
-                        )
-                    }
-                }
-            )
-        }) {
+        topBar = { TopBarTasks(navController, searchTextField, filterSettingsVisible) },
+        floatingActionButton = { TasksFloatingButton(navController) })
+    {
         AsyncView(tasks, "Не удалось загрузить задачи") {
             TaskCardList(
+                modifier = Modifier.padding(bottom = dimens.normalPadding),
                 onClick = { task ->
                     navController.navigate(task)
                 },

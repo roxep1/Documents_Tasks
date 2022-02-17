@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
-import com.bashkir.documentstasks.ui.components.SearchView
+import com.bashkir.documentstasks.ui.components.SearchTextField
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 
 @Composable
@@ -24,7 +24,7 @@ fun TopBar(
     title = {
         if (searchTextState == null)
             Text(titleText)
-        else SearchView(searchTextState = searchTextState)
+        else SearchTextField(searchTextState = searchTextState)
     },
     navigationIcon = {
         if (isBackIcon)

@@ -25,7 +25,7 @@ data class Task(
 //    author,
 //    "новое задание",
 //    pubDate,
-//    MainNavGraphs.MainGraph.TaskDetail.destinationWithArgument(id.toString())
+//    MainNavGraphs.Screen.TaskDetail.destinationWithArgument(id.toString())
 //)
 
 data class TaskForm(

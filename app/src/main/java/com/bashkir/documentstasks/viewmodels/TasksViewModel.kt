@@ -40,6 +40,10 @@ class TasksViewModel(initialState: TasksState, private val service: TasksService
         service.getAllUsers()
     }.execute { copy(users = it) }
 
+    fun completeTask(task: Task) = suspend {
+        service.completeTask(task)
+    }
+
     companion object : MavericksViewModelFactory<TasksViewModel, TasksState>, KoinComponent {
         override fun create(
             viewModelContext: ViewModelContext,

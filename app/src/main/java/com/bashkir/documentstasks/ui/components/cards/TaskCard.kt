@@ -15,11 +15,9 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.ui.components.ShowPerformersView
-import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
+import com.bashkir.documentstasks.ui.components.PerformersView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.cardShape
 import com.bashkir.documentstasks.ui.theme.graySmallText
@@ -28,9 +26,10 @@ import com.bashkir.documentstasks.utils.formatCutToString
 
 @Composable
 fun TaskCardList(
+    modifier: Modifier = Modifier,
     tasks: List<Task> = listOf(),
     onClick: (Task) -> Unit
-) = LazyColumn(modifier = Modifier.fillMaxSize()) {
+) = LazyColumn(modifier = modifier.fillMaxSize()) {
     items(tasks) { task ->
         TaskCard(task = task) { onClick(task) }
     }
@@ -120,7 +119,7 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                 }
             }
             if (isExpanded) {
-                task.performs.ShowPerformersView()
+                task.performs.PerformersView()
                 OutlinedButton(
                     onClick = onClick,
                     modifier = Modifier

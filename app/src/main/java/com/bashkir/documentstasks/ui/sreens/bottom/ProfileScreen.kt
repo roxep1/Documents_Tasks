@@ -8,7 +8,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.bashkir.documentstasks.data.test.testUser1
 import com.bashkir.documentstasks.ui.components.topbars.TopBarBottomNav
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.normalText
@@ -24,15 +23,15 @@ fun ProfileScreenBody(navController: NavController) = Scaffold(
             "//TODO",
             style = titleText
         )
-        Text(
-            testUser1.fullName,
-            style = titleText,
-            modifier = Modifier.padding(bottom = dimens.articlePadding)
-        )
-
-        Text(
-            testUser1.email,
-            style = normalText
-        )
+//        Text(
+//            testUser1.fullName,
+//            style = titleText,
+//            modifier = Modifier.padding(bottom = dimens.articlePadding)
+//        )
+//
+//        Text(
+//            testUser1.email,
+//            style = normalText
+//        )
     }
 }

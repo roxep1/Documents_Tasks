@@ -14,7 +14,7 @@ import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 
 @Composable
-fun List<Perform>.ShowPerformersView() =
+fun List<Perform>.PerformersView() =
     forEach { perform ->
         Row(
             modifier = Modifier

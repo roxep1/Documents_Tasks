@@ -10,28 +10,22 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.bashkir.documentstasks.ui.navigation.MainNavGraphs
+import com.bashkir.documentstasks.ui.navigation.BottomNavScreen
 
 
 @Composable
 fun MainBottomNavigationView(
     bottomNavController: NavController,
-    floatingButton: MutableState<@Composable () -> Unit>,
-    mainNavController: NavController,
     modifier: Modifier = Modifier
 ) =
     BottomNavigation(modifier) {
         val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
-        MainNavGraphs.BottomNavGraph.destinations.forEach { screen ->
+        BottomNavScreen.destinations.forEach { screen ->
             BottomNavigationItem(
-                icon = { screen.Icon() } ,
+                icon = screen.icon ,
                 selected = currentDestination?.hierarchy?.any { it.route == screen.destination } == true,
                 onClick = {
-                    floatingButton.value = {
-                        screen.FloatingButton(mainNavController)
-                    }
-
                     bottomNavController.navigate(screen.destination) {
                         popUpTo(bottomNavController.graph.findStartDestination().id) {
                             saveState = true

@@ -2,20 +2,20 @@ package com.bashkir.documentstasks.data.services
 
 import com.bashkir.documentstasks.data.models.*
 
-class TasksService: SharedService() {
+class TasksService : SharedService() {
 
     suspend fun getAllTasks(): List<Task> = api.getAllTasks(preferences.getAuthorizedId())
 
     suspend fun addTask(task: TaskForm) =
         api.addTask(task.copy(author = UserForm(preferences.getAuthorizedId())))
 
-    suspend fun inProgressPerform(performId: Int) = api.changePerformStatus(
-        performId,
+    suspend fun inProgressTask(task: Task) = api.changePerformStatus(
+        getMyPerform(task).id,
         PerformStatus.InProgress
     )
 
-    suspend fun completePerform(performId: Int) = api.changePerformStatus(
-        performId,
+    suspend fun completeTask(task: Task) = api.changePerformStatus(
+        getMyPerform(task).id,
         PerformStatus.Completed
     )
 
@@ -31,7 +31,7 @@ class TasksService: SharedService() {
 
     fun onlyMyTasks(tasks: List<Task>): List<Task> {
         val id = preferences.getAuthorizedIdIfExist()
-        return tasks.filter { it.performs.any {perform -> perform.user.id == id }}
+        return tasks.filter { it.performs.any { perform -> perform.user.id == id } }
     }
 
     fun onlyIssuedTasks(tasks: List<Task>): List<Task> {

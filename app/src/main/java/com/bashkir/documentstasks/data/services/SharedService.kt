@@ -1,5 +1,7 @@
 package com.bashkir.documentstasks.data.services
 
+import com.bashkir.documentstasks.data.models.Perform
+import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.data.repositories.DocumentsTasksApi
 import com.bashkir.documentstasks.data.repositories.localdata.preferences.LocalUserPreferences
@@ -11,7 +13,10 @@ open class SharedService {
 
     suspend fun getAllUsers(): List<User> {
         val id = preferences.getAuthorizedIdIfExist()
-        return api.getUsers().filter { it.id != id}
+        return api.getUsers().filter { it.id != id }
     }
 
+    fun <T> withAuthorizedId(action: (id: String) -> T): T = action(preferences.getAuthorizedId())
+
+    fun getMyPerform(task: Task): Perform = withAuthorizedId {id ->  task.performs.first { it.user.id == id }}
 }

@@ -15,7 +15,7 @@ import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 
 
 @Composable
-fun CompleteTaskDialog(openDialogState: MutableState<Boolean>, task: Task) {
+fun CompleteTaskDialog(openDialogState: MutableState<Boolean>, task: Task, onCompleteClick: (Task) -> Unit) {
     if (openDialogState.value)
         AlertDialog(
             onDismissRequest = { openDialogState.value = false },
@@ -35,7 +35,7 @@ fun CompleteTaskDialog(openDialogState: MutableState<Boolean>, task: Task) {
                         bottom = dimens.normalPadding
                     ),
                     onClick = {
-                        //TODO
+                        onCompleteClick(task)
                         openDialogState.value = false
                     }) {
                     Text(stringResource(R.string.complete_task_dialog_title))
