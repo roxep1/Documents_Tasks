@@ -6,8 +6,10 @@ import com.bashkir.documentstasks.data.repositories.localdata.preferences.LocalU
 import com.bashkir.documentstasks.data.repositories.localdata.room.AppDatabase
 import com.bashkir.documentstasks.data.repositories.localdata.room.UserDao
 import com.bashkir.documentstasks.data.services.AuthService
+import com.bashkir.documentstasks.data.services.ProfileService
 import com.bashkir.documentstasks.data.services.TasksService
 import com.bashkir.documentstasks.viewmodels.AuthViewModel
+import com.bashkir.documentstasks.viewmodels.ProfileViewModel
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -40,11 +42,13 @@ val localBaseDAOsModule = module {
 val servicesModule = module {
     single { AuthService() }
     single { TasksService() }
+    single { ProfileService() }
 }
 
 val viewModelModule = module {
     factory { params -> AuthViewModel(params.get(), androidContext(), get()) }
     factory { params -> TasksViewModel(params.get(),  get()) }
+    factory { params -> ProfileViewModel(params.get(), androidContext(), get()) }
 }
 
 val modules = listOf(

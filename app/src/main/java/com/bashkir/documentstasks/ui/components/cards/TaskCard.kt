@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.ui.components.PerformersView
+import com.bashkir.documentstasks.ui.components.views.PerformersView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.cardShape
 import com.bashkir.documentstasks.ui.theme.graySmallText
@@ -27,16 +27,20 @@ import com.bashkir.documentstasks.utils.formatCutToString
 @Composable
 fun TaskCardList(
     modifier: Modifier = Modifier,
-    tasks: List<Task> = listOf(),
-    onClick: (Task) -> Unit
+    tasks: Map<Task, Boolean> = mapOf(),
+    onDetailsClick: (Task) -> Unit
 ) = LazyColumn(modifier = modifier.fillMaxSize()) {
-    items(tasks) { task ->
-        TaskCard(task = task) { onClick(task) }
+    items(tasks.toList()) { (task, isAuthor) ->
+        TaskCard(task = task, isAuthor) { onDetailsClick(task) }
     }
 }
 
 @Composable
-fun TaskCard(task: Task, onClick: () -> Unit) {
+fun TaskCard(
+    task: Task,
+    isAuthor: Boolean,
+    onDetailsClick: () -> Unit
+) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -57,42 +61,8 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = dimens.normalPadding),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        task.title,
-                        style = titleText
-                    )
-                    Spacer(modifier = Modifier.height(dimens.articlePadding))
-                    Text(task.desc, maxLines = 2, fontSize = dimens.normalText)
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .padding(start = dimens.normalPadding),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        "Сдать до: ${task.deadline.formatCutToString()}",
-                        style = titleText,
-                        modifier = Modifier.align(CenterHorizontally)
-                    )
-//                    Spacer(modifier = Modifier.height(dimens.articlePadding))
-//                    Row(modifier = Modifier.align(CenterHorizontally)) {
-//                        Text(
-//                            "Статус: ",
-//                            style = titleText
-//                        )
-//                        Text(
-//                            task.performers.
-//                        )
-//                    }
-                }
-
+                TitleAndDesc(task)
+                DeadLine(task)
             }
 
             Row(
@@ -102,38 +72,80 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Row(modifier = Modifier) {
-                    Text(task.pubDate.formatCutToString(), style = graySmallText)
-                    Spacer(modifier = Modifier.width(dimens.normalPadding))
-                    Text("Автор: ${task.author.fullName}", style = graySmallText)
-                }
-                Row(verticalAlignment = Alignment.Bottom) {
-                    Text(
-                        "${stringResource(R.string.performers)} ${task.performs.count()}",
-                        style = graySmallText
-                    )
-                    Icon(
-                        painterResource(if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down),
-                        "arrow down"
-                    )
-                }
+                DownInfo(task)
+                PerformersButton(task, isExpanded)
             }
             if (isExpanded) {
-                task.performs.PerformersView()
-                OutlinedButton(
-                    onClick = onClick,
-                    modifier = Modifier
-                        .padding(
-                            top = dimens.normalPadding,
-                            end = dimens.normalPadding,
-                            start = dimens.normalPadding
-                        )
-                        .align(CenterHorizontally)
-                        .fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.task_details_button), style = titleText)
-                }
+                if (isAuthor)
+                    task.performs.PerformersView()
+                CardButton(
+                    Modifier.align(CenterHorizontally),
+                    stringResource(R.string.task_details_button),
+                    onDetailsClick
+                )
+
             }
         }
     }
+}
+
+
+@Composable
+private fun CardButton(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) =
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier
+            .padding(horizontal = dimens.normalPadding)
+            .padding(top = dimens.normalPadding)
+    ) {
+        Text(text, style = titleText)
+    }
+
+@Composable
+private fun PerformersButton(task: Task, isExpanded: Boolean) =
+    Row(verticalAlignment = Alignment.Bottom) {
+        Text(
+            "${stringResource(R.string.performers)} ${task.performs.count()}",
+            style = graySmallText
+        )
+        Icon(
+            painterResource(if (isExpanded) R.drawable.ic_arrow_up else R.drawable.ic_arrow_down),
+            "arrow down"
+        )
+    }
+
+@Composable
+private fun DownInfo(task: Task) = Row(modifier = Modifier) {
+    Text(task.pubDate.formatCutToString(), style = graySmallText)
+    Spacer(modifier = Modifier.width(dimens.normalPadding))
+    Text("Автор: ${task.author.fullName}", style = graySmallText)
+}
+
+@Composable
+private fun RowScope.DeadLine(task: Task) = Column(
+    modifier = Modifier
+        .weight(0.5f)
+        .padding(start = dimens.normalPadding),
+    verticalArrangement = Arrangement.SpaceBetween
+) {
+    Text(
+        "Сдать до: ${task.deadline.formatCutToString()}",
+        style = titleText,
+        modifier = Modifier.align(CenterHorizontally)
+    )
+}
+
+@Composable
+private fun RowScope.TitleAndDesc(task: Task) = Column(
+    modifier = Modifier
+        .weight(1f)
+        .padding(end = dimens.normalPadding),
+    verticalArrangement = Arrangement.SpaceBetween
+) {
+    Text(
+        task.title,
+        style = titleText
+    )
+    Spacer(modifier = Modifier.height(dimens.articlePadding))
+    Text(task.desc, maxLines = 2, fontSize = dimens.normalText)
 }

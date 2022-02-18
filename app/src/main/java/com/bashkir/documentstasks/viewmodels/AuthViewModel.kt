@@ -16,23 +16,22 @@ class AuthViewModel(
 ) :
     MavericksViewModel<AuthState>(initialState) {
 
-    fun checkSignedIn(): String? {
+    fun checkSignedIn() =
         GoogleSignIn.getLastSignedInAccount(context)?.let {
             setSignedUserId(it)
-            return it.id
         }
-        return null
-    }
 
     fun setLoading() = setState { copy(userId = Loading()) }
 
     fun setFailed(e: Throwable = Throwable()) = setState { copy(userId = Fail(e)) }
 
+    fun setUninitialized() = setState { copy(userId = Uninitialized) }
+
     fun setSignedUserId(account: GoogleSignInAccount) = setSignedUserId(account.id!!)
 
-    fun setSignedUserId(id: String) = suspend {
+    private fun setSignedUserId(id: String) = suspend {
         service.authorizeUser(id)
-    }.execute { copy(userId = it)  }
+    }.execute { copy(userId = it) }
 
     companion object : MavericksViewModelFactory<AuthViewModel, AuthState>, KoinComponent {
         override fun create(viewModelContext: ViewModelContext, state: AuthState): AuthViewModel =

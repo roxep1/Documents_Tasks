@@ -1,5 +1,6 @@
 package com.bashkir.documentstasks.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -8,13 +9,15 @@ import com.bashkir.documentstasks.ui.sreens.*
 import com.bashkir.documentstasks.ui.sreens.bottom.ProfileScreenBody
 import com.bashkir.documentstasks.ui.sreens.bottom.TasksScreenBody
 import com.bashkir.documentstasks.viewmodels.AuthViewModel
+import com.bashkir.documentstasks.viewmodels.ProfileViewModel
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
 
 @Composable
 fun CreateMainNavHost(
     navController: NavHostController,
     authViewModel: AuthViewModel,
-    tasksViewModel: TasksViewModel
+    tasksViewModel: TasksViewModel,
+    profileViewModel: ProfileViewModel
 ) =
     NavHost(
         navController = navController,
@@ -25,14 +28,14 @@ fun CreateMainNavHost(
         }
 
         composable(Screen.BottomNav.destination) {
-            MainScreenBody(navController = navController, tasksViewModel)
+            MainScreenBody(navController = navController, tasksViewModel, profileViewModel)
         }
 
-        composable(Screen.TaskDetail.destination) {
-            val taskId = Screen.TaskDetail.getIntArgument(it)
+        composable(Screen.TaskDetail.destinationWithArgument()) {
+            val taskId = Screen.TaskDetail.getArgument(it)!!.toInt()
 
             TaskDetailScreenBody(
-                taskId = taskId!!,
+                taskId = taskId,
                 navController = navController,
                 tasksViewModel
             )
@@ -51,7 +54,8 @@ fun CreateMainNavHost(
 fun CreateBottomNavHost(
     bottomBarNavController: NavHostController,
     mainNavController: NavHostController,
-    tasksViewModel: TasksViewModel
+    tasksViewModel: TasksViewModel,
+    profileViewModel: ProfileViewModel
 ) =
     NavHost(
         navController = bottomBarNavController,
@@ -62,6 +66,6 @@ fun CreateBottomNavHost(
         }
 
         composable(BottomNavScreen.Profile.destination) {
-            ProfileScreenBody(navController = mainNavController)
+            ProfileScreenBody(navController = mainNavController, profileViewModel)
         }
     }

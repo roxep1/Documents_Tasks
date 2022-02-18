@@ -11,7 +11,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface UserDao {
     @Query("SELECT * FROM user WHERE id IN (:ids)")
-    fun loadLocalUsers(ids: List<String>): Flow<List<UserEntity>>
+    suspend fun getLocalUsers(ids: List<String>): List<UserEntity>
+
+    @Query("SELECT * FROM user WHERE id = :id")
+    suspend fun getLocalUser(id: String): UserEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addLocalUser(user: UserEntity)

@@ -27,7 +27,7 @@ enum class TaskFilterOption(val option: String) {
 }
 
 @Composable
-fun TaskFilterSettingsCard(selectedOption: MutableState<TaskFilterOption>) = Card(
+fun TaskFilterSettingsCard(selectedOption: MutableState<TaskFilterOption>, onSelect: () -> Unit = {}) = Card(
     Modifier
         .fillMaxWidth(),
     shape = settingsCardShape
@@ -39,12 +39,14 @@ fun TaskFilterSettingsCard(selectedOption: MutableState<TaskFilterOption>) = Car
                     .fillMaxWidth()
                     .selectable(selected = filterOption == selectedOption.value) {
                         selectedOption.value = filterOption
+                        onSelect()
                     }
             ) {
                 RadioButton(
                     selected = filterOption == selectedOption.value,
                     onClick = {
                         selectedOption.value = filterOption
+                        onSelect()
                     }
                 )
                 Text(

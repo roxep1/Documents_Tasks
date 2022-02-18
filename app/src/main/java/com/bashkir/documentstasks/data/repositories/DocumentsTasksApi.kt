@@ -16,14 +16,18 @@ interface DocumentsTasksApi {
     @POST("task")
     suspend fun addTask(@Body task: TaskForm)
 
+    @DELETE("task/{id}")
+    suspend fun deleteTask(@Path("id") taskId: Int)
+
     @PUT("task/{id}/comment")
     suspend fun addCommentToPerform(@Path("id") performId: Int, @Body comment: String)
-
-    @POST("document/perform/{id}")
-    suspend fun addDocumentToPerform(@Path("id") performId: Int, @Body document: DocumentForm)
 
     @PUT("task/{id}/status")
     suspend fun changePerformStatus(@Path("id") performId: Int, @Body performStatus: PerformStatus)
 
+    @POST("document/perform/{id}")
+    suspend fun addDocumentToPerform(@Path("id") performId: Int, @Body document: DocumentForm)
 
+    @PUT("task/status")
+    suspend fun inProgressAllPerforms(@Body performsId: List<Int>)
 }

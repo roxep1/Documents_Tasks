@@ -20,9 +20,9 @@ import com.bashkir.documentstasks.ui.theme.placeHolderText
 import com.bashkir.documentstasks.ui.theme.smallText
 
 @Composable
-fun SearchTextField(searchTextState: MutableState<TextFieldValue>) =
+fun SearchTextField(searchTextState: MutableState<TextFieldValue>, modifier: Modifier = Modifier) =
     OutlinedTextField(
-        modifier = Modifier
+        modifier = modifier
             .padding(
                 top = dimens.smallPadding,
                 bottom = dimens.smallPadding

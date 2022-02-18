@@ -45,14 +45,14 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
         val (button, errorText) = createRefs()
 
         LaunchedEffect(true) {
-            viewModel.checkSignedIn()?.let {
-                viewModel.setSignedUserId(it)
-            }
+            viewModel.checkSignedIn()
         }
 
         LaunchedEffect(userId) {
-            if (userId is Success)
+            if (userId is Success) {
+                viewModel.setUninitialized()
                 navController.authNavigate()
+            }
         }
 
         val authResultLauncher =

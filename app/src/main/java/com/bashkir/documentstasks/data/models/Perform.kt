@@ -1,5 +1,7 @@
 package com.bashkir.documentstasks.data.models
 
+import com.bashkir.documentstasks.utils.LocalDateTimeJsonAdapter
+import com.google.gson.annotations.JsonAdapter
 import java.time.LocalDateTime
 
 data class Perform(
@@ -8,6 +10,8 @@ data class Perform(
     val taskId: Int,
     val status: PerformStatus,
     val comment: String? = null,
+
+    @JsonAdapter(LocalDateTimeJsonAdapter::class)
     val statusChanged: LocalDateTime? = null,
     val documents: List<Document> = listOf()
 )

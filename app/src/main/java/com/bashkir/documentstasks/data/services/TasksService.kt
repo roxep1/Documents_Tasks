@@ -14,18 +14,21 @@ class TasksService : SharedService() {
         PerformStatus.InProgress
     )
 
+    suspend fun inProgressAllTasks(tasks: List<Task>) =
+        api.inProgressAllPerforms(getMyPerforms(*tasks.toTypedArray()).map { it.id })
+
     suspend fun completeTask(task: Task) = api.changePerformStatus(
         getMyPerform(task).id,
         PerformStatus.Completed
     )
 
-    suspend fun addDocumentToPerform(performId: Int, doc: DocumentForm) = api.addDocumentToPerform(
-        performId,
+    suspend fun addDocumentToTask(task: Task, doc: DocumentForm) = api.addDocumentToPerform(
+        getMyPerform(task).id,
         doc.copy(author = UserForm(preferences.getAuthorizedId()))
     )
 
-    suspend fun addCommentToPerform(performId: Int, comment: String) = api.addCommentToPerform(
-        performId,
+    suspend fun addCommentToTask(task: Task, comment: String) = api.addCommentToPerform(
+        getMyPerform(task).id,
         comment
     )
 
@@ -38,4 +41,6 @@ class TasksService : SharedService() {
         val id = preferences.getAuthorizedIdIfExist()
         return tasks.filter { it.author.id == id }
     }
+
+    suspend fun deleteTask(task: Task) = api.deleteTask(task.id)
 }

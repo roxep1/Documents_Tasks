@@ -30,4 +30,6 @@ data class UserEntity(
     val secondName: String,
     val middleName: String?,
     val email: String
-)
+) {
+    fun toUser(): User = User(id, firstName, secondName, middleName, email)
+}

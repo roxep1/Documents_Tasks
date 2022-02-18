@@ -1,11 +1,12 @@
 package com.bashkir.documentstasks.ui.sreens.bottom
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
@@ -29,8 +30,6 @@ fun TasksScreenBody(
     navController: NavController,
     viewModel: TasksViewModel
 ) {
-    OnCreate(viewModel = viewModel)
-
     val searchTextField = remember { mutableStateOf(TextFieldValue()) }
     val filterSettingsVisible = remember { mutableStateOf(false) }
     val taskFilterOption = remember { mutableStateOf(TaskFilterOption.ALL) }
@@ -43,9 +42,7 @@ fun TasksScreenBody(
         AsyncView(tasks, "Не удалось загрузить задачи") {
             TaskCardList(
                 modifier = Modifier.padding(bottom = dimens.normalPadding),
-                onClick = { task ->
-                    navController.navigate(task)
-                },
+                onDetailsClick = navController::navigate,
                 tasks = viewModel.filterTasks(
                     it,
                     searchTextField.value.text,
@@ -55,13 +52,9 @@ fun TasksScreenBody(
         }
 
         AnimateVertical(visible = filterSettingsVisible) {
-            TaskFilterSettingsCard(taskFilterOption)
+            TaskFilterSettingsCard(taskFilterOption){
+                filterSettingsVisible.value = false
+            }
         }
     }
-}
-
-@Composable
-private fun OnCreate(viewModel: TasksViewModel) = LaunchedEffect(viewModel) {
-    viewModel.getAllTasks()
-    viewModel.getAllUsers()
 }

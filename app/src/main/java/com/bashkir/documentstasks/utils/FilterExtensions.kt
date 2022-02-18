@@ -10,9 +10,14 @@ fun List<Task>.filter(searchText: String): List<Task> = filter { task ->
     else true
 }
 
+fun Set<Task>.filter(searchText: String): List<Task> = this.toList().filter(searchText)
+
+fun Map<Task, Boolean>.filter(searchText: String): Map<Task, Boolean> =
+    keys.filter(searchText).associateWith { this[it]!! }
+
 @JvmName("filterUser")
-fun List<User>.filter(searchText: String): List<User> = filter{ user ->
-    if(searchText.isNotBlank() && searchText.isNotEmpty())
+fun List<User>.filter(searchText: String): List<User> = filter { user ->
+    if (searchText.isNotBlank() && searchText.isNotEmpty())
         user.email.contains(searchText) ||
                 user.fullName.contains(searchText)
     else true

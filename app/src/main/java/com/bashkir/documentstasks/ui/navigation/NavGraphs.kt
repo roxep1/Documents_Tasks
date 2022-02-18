@@ -26,7 +26,7 @@ sealed class BottomNavScreen(val destination: String, val icon: @Composable () -
     }
 }
 
-sealed class Screen(var destination: String, private val argumentName: String? = null) {
+sealed class Screen(val destination: String, private val argumentName: String? = null) {
 
     object BottomNav : Screen("main_screen")
     object TaskDetail : Screen("task_detail", "taskId")
@@ -34,16 +34,15 @@ sealed class Screen(var destination: String, private val argumentName: String? =
     object AddTask : Screen("add_task")
     object Auth : Screen("auth")
 
-    init {
-        if (argumentName != null)
-            destination += "/{$argumentName}"
-    }
-
     fun getArgument(backStackEntry: NavBackStackEntry): String? =
         backStackEntry.arguments?.getString(argumentName)
 
     fun getIntArgument(backStackEntry: NavBackStackEntry): Int? =
         backStackEntry.arguments?.getInt(argumentName)
+
     fun destinationWithArgument(argument: String): String =
-        destination.replace("{$argumentName}", argument)
+        "$destination/$argument"
+
+    fun destinationWithArgument(): String =
+        "$destination/{$argumentName}"
 }
