@@ -46,4 +46,5 @@ private fun OnCreate(tasksViewModel: TasksViewModel, profileViewModel: ProfileVi
     LaunchedEffect(true) {
         tasksViewModel.getAllTasks()
         profileViewModel.getAuthorizedUser()
+        tasksViewModel.getAllUsers()
     }

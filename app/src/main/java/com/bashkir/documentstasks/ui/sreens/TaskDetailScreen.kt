@@ -27,6 +27,7 @@ import com.bashkir.documentstasks.utils.formatToString
 import com.bashkir.documentstasks.viewmodels.TasksState
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
 import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import com.vanpra.composematerialdialogs.title
 
@@ -39,9 +40,10 @@ fun TaskDetailScreenBody(taskId: Int, navController: NavController, viewModel: T
         topBar = { TopBar(titleText = title, navController = navController) }
     ) {
         AsyncView(tasks, "Не удалось загрузить задачи") {
-            val task = it.find {task -> task.id == taskId }!!
-            title = task.title
-            TaskDetailView(task = task, viewModel, viewModel.isIssuedTask(task), navController)
+            it.find { task -> task.id == taskId }?.let { task ->
+                title = task.title
+                TaskDetailView(task = task, viewModel, viewModel.isIssuedTask(task), navController)
+            }
         }
     }
 }
@@ -57,6 +59,7 @@ private fun TaskDetailView(
         Modifier
             .padding(dimens.normalPadding)
             .verticalScroll(rememberScrollState())
+            .fillMaxSize()
     ) {
 
         Text(task.desc)
@@ -82,7 +85,7 @@ private fun ColumnScope.MyTaskView(task: Task, viewModel: TasksViewModel) {
 
             OutlinedButton(
                 modifier = Modifier
-                    .padding(dimens.normalPadding)
+                    .padding(top = dimens.normalPadding)
                     .align(CenterHorizontally),
                 onClick = {
                     if (status == InProgress) openDialog.value = true
@@ -130,14 +133,15 @@ private fun ColumnScope.IssuedTaskView(
         }
         negativeButton("Отмена")
     }) {
-        title("Вы уверены, что хотите удалить задачу ${task.title}?")
+        title("Внимание")
+        message("Вы уверены, что хотите удалить задачу ${task.title}?")
     }
 }
 
 @Composable
 private fun ColumnScope.TaskDetailButton(text: String, onClick: () -> Unit) = OutlinedButton(
     modifier = Modifier
-        .padding(dimens.normalPadding)
+        .padding(top = dimens.normalPadding)
         .align(CenterHorizontally),
     onClick = onClick
 ) {

@@ -5,7 +5,9 @@ import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.data.repositories.DocumentsTasksApi
 import com.bashkir.documentstasks.data.repositories.localdata.preferences.LocalUserPreferences
+import com.bashkir.documentstasks.data.repositories.localdata.room.NotificationDao
 import com.bashkir.documentstasks.data.repositories.localdata.room.UserDao
+import org.koin.java.KoinJavaComponent
 import org.koin.java.KoinJavaComponent.inject
 
 open class SharedService {
@@ -18,9 +20,9 @@ open class SharedService {
         return api.getUsers().filter { it.id != id }
     }
 
-    fun <T> withAuthorizedId(action: (id: String) -> T): T = action(preferences.getAuthorizedId())
+    private fun <T> withAuthorizedId(action: (id: String) -> T): T = action(preferences.getAuthorizedId())
 
-    fun getMyPerforms(vararg tasks: Task): List<Perform> =
+    private fun getMyPerforms(vararg tasks: Task): List<Perform> =
         withAuthorizedId { id -> tasks.map {task -> task.performs.first { it.user.id == id } } }
 
     fun getMyPerform(task: Task): Perform = getMyPerforms(task).first()

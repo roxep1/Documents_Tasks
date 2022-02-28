@@ -34,25 +34,24 @@ fun ProfileScreenBody(navController: NavController, viewModel: ProfileViewModel)
             .padding(dimens.normalPadding)
     ) {
         //TODO
-        Text(
-            "//TODO",
-            style = titleText
-        )
         AsyncView(user, errorText = "Не удалось загрузить авторизованного пользователя") {
             Box(
                 Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                Text(
-                    it.fullName,
-                    style = titleText,
-                    modifier = Modifier.padding(bottom = dimens.articlePadding)
-                )
-                Text(
-                    it.email,
-                    style = normalText
-                )
+                Column {
+                    Text(
+                        it.fullName,
+                        style = titleText,
+                        modifier = Modifier.padding(bottom = dimens.articlePadding)
+                    )
+
+                    Text(
+                        it.email,
+                        style = normalText
+                    )
+                }
 
                 OutlinedButton(
                     onClick = viewModel::logout,

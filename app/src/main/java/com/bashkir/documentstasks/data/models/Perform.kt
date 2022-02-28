@@ -1,5 +1,9 @@
 package com.bashkir.documentstasks.data.models
 
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.bashkir.documentstasks.ui.navigation.Screen
 import com.bashkir.documentstasks.utils.LocalDateTimeJsonAdapter
 import com.google.gson.annotations.JsonAdapter
 import java.time.LocalDateTime
@@ -14,8 +18,30 @@ data class Perform(
     @JsonAdapter(LocalDateTimeJsonAdapter::class)
     val statusChanged: LocalDateTime? = null,
     val documents: List<Document> = listOf()
-)
+) : Notifiable(
+    "Обновлен статус",
+    user,
+    "обновил статус выполнения задачи на ${status.text}",
+    statusChanged ?: LocalDateTime.now(),
+    Screen.TaskDetail.destinationWithArgument(id.toString()),
+    notifyId = id
+) {
+    fun toEntity() = PerformEntity(id, user.toEntity(), taskId, status, comment, statusChanged)
+}
 
 data class PerformForm(
     val user: UserForm
 )
+
+@Entity(tableName = "perform")
+data class PerformEntity(
+    @PrimaryKey val performId: Int,
+    @Embedded val userPerformer: UserEntity,
+    val taskPerformsId: Int,
+    val status: PerformStatus,
+    val comment: String?,
+    val statusChanged: LocalDateTime?
+) {
+    fun toPerform(): Perform =
+        Perform(performId, userPerformer.toUser(), taskPerformsId, status, comment, statusChanged)
+}

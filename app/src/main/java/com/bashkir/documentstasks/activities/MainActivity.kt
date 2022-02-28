@@ -1,5 +1,6 @@
 package com.bashkir.documentstasks.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,10 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.rememberNavController
 import com.airbnb.mvrx.compose.mavericksActivityViewModel
+import com.bashkir.documentstasks.data.repositories.localdata.room.AppDatabase
 import com.bashkir.documentstasks.ui.navigation.CreateMainNavHost
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.viewmodels.ProfileViewModel
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.get
+import kotlin.coroutines.CoroutineContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,19 +38,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun StartMainActivity() {
-    val tasksViewModel: TasksViewModel = mavericksActivityViewModel()
-
-    OnStart(tasksViewModel)
-
     CreateMainNavHost(
         navController = rememberNavController(),
         authViewModel = mavericksActivityViewModel(),
-        tasksViewModel = tasksViewModel,
-        profileViewModel = mavericksActivityViewModel()
+        tasksViewModel = mavericksActivityViewModel(),
+        profileViewModel = mavericksActivityViewModel(),
+        notificationsViewModel = mavericksActivityViewModel()
     )
-}
-
-@Composable
-fun OnStart(tasksViewModel: TasksViewModel) = LaunchedEffect(true){
-    tasksViewModel.getAllUsers()
 }

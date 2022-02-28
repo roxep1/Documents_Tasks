@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.bashkir.documentstasks.data.models.Notifiable
 import com.bashkir.documentstasks.ui.theme.*
@@ -24,7 +23,7 @@ fun NotificationCardList(
 ) = LazyColumn(modifier = Modifier.fillMaxSize()) {
     items(notifications) { notification ->
         NotificationCard(notification) {
-            navController.navigate(notification.destination)
+            navController.navigate(notification.destinationOfAction)
         }
     }
 }
@@ -40,18 +39,18 @@ fun NotificationCard(notification: Notifiable, onClick: (Int) -> Unit) = Card(
         ),
     elevation = dimens.normalElevation,
     shape = cardShape,
-    backgroundColor = if (notification.checked) Color.Gray else MaterialTheme.colors.surface
+    backgroundColor = if (notification.checkedStatus) Color.Gray else MaterialTheme.colors.surface
 ) {
     Column(
         Modifier.padding(dimens.normalPadding)
     ) {
         Text(
-            "Пользователь ${notification.author.fullName} добавил ${notification.subject} для вас.",
+            "Пользователь ${notification.notifier.fullName} ${notification.action}.",
             style = titleText
         )
         Spacer(Modifier.height(dimens.articlePadding))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(notification.time.formatCutToString(), style = graySmallText)
+            Text(notification.timeOfAction.formatCutToString(), style = graySmallText)
             ClickableText(text = annotatedLinkString, onClick = onClick)
         }
 

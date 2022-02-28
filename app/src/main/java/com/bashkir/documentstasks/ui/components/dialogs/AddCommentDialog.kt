@@ -15,6 +15,7 @@ fun AddCommentDialog(dialogState: MaterialDialogState, setComment: (String) -> U
         input(
             label = "Комментарий",
             hint = "Комментарий к выполнению работы...",
-            onInput = setComment
+            onInput = setComment,
+            isTextValid = {it.isNotBlank()}
         )
     }

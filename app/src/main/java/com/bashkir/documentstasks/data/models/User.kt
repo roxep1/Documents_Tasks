@@ -1,5 +1,6 @@
 package com.bashkir.documentstasks.data.models
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -25,11 +26,11 @@ data class UserForm(
 
 @Entity(tableName = "user")
 data class UserEntity(
-    @PrimaryKey val id: String,
-    val firstName: String,
+    @PrimaryKey val userId: String,
+    @ColumnInfo(defaultValue = "") val firstName: String,
     val secondName: String,
     val middleName: String?,
     val email: String
 ) {
-    fun toUser(): User = User(id, firstName, secondName, middleName, email)
+    fun toUser(): User = User(userId, firstName, secondName, middleName, email)
 }

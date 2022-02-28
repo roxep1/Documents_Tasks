@@ -1,5 +1,6 @@
 package com.bashkir.documentstasks.ui.components.dialogs
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,21 +33,21 @@ fun AddPerformersDialog(
         customView {
             AsyncView(allUsers, "Не удалось загрузить пользователей") {
                 val searchTextField = remember { mutableStateOf(TextFieldValue()) }
-
-                SearchTextField(searchTextState = searchTextField)
-
-                LazyColumn {
-                    items(it
-                        .filter { !addedPerformers.contains(it) }
-                        .filter(searchTextField.value.text)) { user ->
-                        UserCard(
-                            Modifier
-                                .padding(top = DocumentsTasksTheme.dimens.articlePadding)
-                                .padding(horizontal = DocumentsTasksTheme.dimens.normalPadding),
-                            user = user
-                        ) {
-                            addedPerformers.add(user)
-                            dialogState.hide()
+                Column {
+                    SearchTextField(searchTextState = searchTextField)
+                    LazyColumn {
+                        items(it
+                            .filter { !addedPerformers.contains(it) }
+                            .filter(searchTextField.value.text)) { user ->
+                            UserCard(
+                                Modifier
+                                    .padding(top = DocumentsTasksTheme.dimens.articlePadding)
+                                    .padding(horizontal = DocumentsTasksTheme.dimens.normalPadding),
+                                user = user
+                            ) {
+                                addedPerformers.add(user)
+                                dialogState.hide()
+                            }
                         }
                     }
                 }

@@ -9,6 +9,7 @@ import com.bashkir.documentstasks.ui.sreens.*
 import com.bashkir.documentstasks.ui.sreens.bottom.ProfileScreenBody
 import com.bashkir.documentstasks.ui.sreens.bottom.TasksScreenBody
 import com.bashkir.documentstasks.viewmodels.AuthViewModel
+import com.bashkir.documentstasks.viewmodels.NotificationsViewModel
 import com.bashkir.documentstasks.viewmodels.ProfileViewModel
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
 
@@ -17,7 +18,8 @@ fun CreateMainNavHost(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     tasksViewModel: TasksViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    notificationsViewModel: NotificationsViewModel
 ) =
     NavHost(
         navController = navController,
@@ -35,18 +37,18 @@ fun CreateMainNavHost(
             val taskId = Screen.TaskDetail.getArgument(it)!!.toInt()
 
             TaskDetailScreenBody(
-                taskId = taskId,
-                navController = navController,
+                taskId,
+                navController,
                 tasksViewModel
             )
         }
 
         composable(Screen.Notifications.destination) {
-            NotificationsScreenBody(navController = navController)
+            NotificationsScreenBody(navController, notificationsViewModel)
         }
 
         composable(Screen.AddTask.destination) {
-            AddTaskScreenBody(navController = navController, tasksViewModel)
+            AddTaskScreenBody(navController, tasksViewModel)
         }
     }
 

@@ -32,4 +32,3 @@ private fun NotificationsIcon(navController: NavController) =
     IconButton(onClick = { navController.navigate(Screen.Notifications.destination) }) {
         Icon(painterResource(R.drawable.ic_notifications), "notifications")
     }
-

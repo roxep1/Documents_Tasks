@@ -21,6 +21,7 @@ class LocalUserPreferences(context: Context) {
 
     fun logoutUser() = sharedPref.edit{
         putBoolean(getAuthorizedId(), false)
+        commit()
     }
 
     private fun getAllUsersId(): List<String> = sharedPref.all.keys.map { it }
