@@ -8,29 +8,17 @@ import org.koin.java.KoinJavaComponent.inject
 class TasksService : NotificationsService() {
     private val taskDao: TaskDao by inject(TaskDao::class.java)
 
-    suspend fun getAllTasks(): List<Task> {
+    suspend fun getAllTasks(): List<Task> =
         api.getAllTasks(preferences.getAuthorizedId()).let { tasks ->
-            taskDao.run {
-                getAllLocalTasks().run {
-                    map { it.toTask() }.forEach {
-                        if (!tasks.contains(it))
-                            notificationDao.insertAll(it.toNotification())
-                    }
-                }
-                getAllPerforms().map { it.toPerform() }.forEach { perform ->
-                    if (tasks.getAllPerforms()
-                            .find { it.id == perform.id }?.status != perform.status
-                    )
-                        notificationDao.insertAll(perform.toNotification())
-                }
+            taskDao.run{
+                notificationsWithTasks(tasks)
                 insertAll(
                     tasks.getAllPerforms().map { it.toEntity() },
                     *tasks.map { it.toEntity() }.toTypedArray()
                 )
             }
-            return tasks
+            tasks
         }
-    }
 
     suspend fun addTask(task: TaskForm) =
         api.addTask(task.copy(author = UserForm(preferences.getAuthorizedId())))

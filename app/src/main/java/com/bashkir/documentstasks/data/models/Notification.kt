@@ -15,34 +15,5 @@ data class Notification(
     val time: LocalDateTime,
     val destination: String,
     val checked: Boolean,
-    @PrimaryKey(autoGenerate = true) val id: Int
-) : Notifiable(
-    title,
-    author.toUser(),
-    subject,
-    time,
-    destination,
-    checked,
-    id
+    @PrimaryKey val id: String
 )
-
-
-abstract class Notifiable(
-    @Ignore @Expose val titleOfAction: String,
-    @Ignore @Expose val notifier: User,
-    @Ignore @Expose val action: String,
-    @Ignore @Expose val timeOfAction: LocalDateTime,
-    @Ignore @Expose val destinationOfAction: String,
-    @Ignore @Expose val checkedStatus: Boolean = false,
-    @Ignore @Expose val notifyId: Int = 0
-) {
-    fun toNotification(): Notification = Notification(
-        titleOfAction,
-        notifier.toEntity(),
-        action,
-        timeOfAction,
-        destinationOfAction,
-        checkedStatus,
-        notifyId
-    )
-}

@@ -23,15 +23,21 @@ data class Task(
     @SerializedName("created")
     val pubDate: LocalDateTime,
     val performs: List<Perform> = listOf()
-) : Notifiable(
-    title,
-    author,
-    "добавил новое задание для вас",
-    pubDate,
-    Screen.TaskDetail.destinationWithArgument(id.toString()),
-    notifyId = id
 ) {
+    val notificationId
+        get() = "task$id"
+
     fun toEntity(): TaskEntity = TaskEntity(id, title, desc, deadline, author.toEntity(), pubDate)
+    fun toNotification(action: String, time: LocalDateTime = pubDate): Notification =
+        Notification(
+            title,
+            author.toEntity(),
+            action,
+            time,
+            Screen.TaskDetail.destinationWithArgument(id.toString()),
+            false,
+            notificationId
+        )
 }
 
 data class TaskForm(
@@ -72,4 +78,5 @@ data class TaskWithPerforms(
             pubDate,
             performs.map { it.toPerform() })
     }
+
 }

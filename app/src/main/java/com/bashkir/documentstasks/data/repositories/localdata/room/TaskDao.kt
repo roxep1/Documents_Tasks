@@ -18,6 +18,10 @@ interface TaskDao {
     @Query("SELECT * FROM perform")
     suspend fun getAllPerforms(): List<PerformEntity>
 
+    @Transaction
+    @Query("SELECT * FROM task WHERE userId != :userId")
+    suspend fun getTasksToDo(userId: String): List<TaskWithPerforms>
+
     @Query("DELETE FROM task WHERE taskId NOT IN (:tasksId) ")
     suspend fun deleteAllNotIn(tasksId: List<Int>)
 

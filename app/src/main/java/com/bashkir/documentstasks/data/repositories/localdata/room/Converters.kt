@@ -1,9 +1,6 @@
 package com.bashkir.documentstasks.data.repositories.localdata.room
 
 import androidx.room.TypeConverter
-import com.bashkir.documentstasks.data.models.Notifiable
-import com.bashkir.documentstasks.data.models.Notification
-import com.bashkir.documentstasks.data.models.PerformStatus
 import java.time.LocalDateTime
 
 class Converters {

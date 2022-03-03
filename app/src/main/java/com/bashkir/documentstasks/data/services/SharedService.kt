@@ -22,8 +22,11 @@ open class SharedService {
 
     private fun <T> withAuthorizedId(action: (id: String) -> T): T = action(preferences.getAuthorizedId())
 
-    private fun getMyPerforms(vararg tasks: Task): List<Perform> =
+    protected fun getMyPerforms(vararg tasks: Task): List<Perform> =
         withAuthorizedId { id -> tasks.map {task -> task.performs.first { it.user.id == id } } }
+
+    protected fun getTasksToDo(vararg tasks: Task): List<Task> =
+        withAuthorizedId { id -> tasks.filter { it.author.id != id } }
 
     fun getMyPerform(task: Task): Perform = getMyPerforms(task).first()
 }

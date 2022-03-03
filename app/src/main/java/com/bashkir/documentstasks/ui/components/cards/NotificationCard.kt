@@ -12,24 +12,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.navigation.NavController
-import com.bashkir.documentstasks.data.models.Notifiable
+import com.bashkir.documentstasks.data.models.Notification
 import com.bashkir.documentstasks.ui.theme.*
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.utils.formatCutToString
 
 @Composable
 fun NotificationCardList(
-    notifications: List<Notifiable> = listOf(), navController: NavController
+    notifications: List<Notification> = listOf(), navController: NavController
 ) = LazyColumn(modifier = Modifier.fillMaxSize()) {
     items(notifications) { notification ->
         NotificationCard(notification) {
-            navController.navigate(notification.destinationOfAction)
+            navController.navigate(notification.destination)
         }
     }
 }
 
 @Composable
-fun NotificationCard(notification: Notifiable, onClick: (Int) -> Unit) = Card(
+fun NotificationCard(notification: Notification, onClick: (Int) -> Unit) = Card(
     modifier = Modifier
         .fillMaxWidth()
         .padding(
@@ -39,18 +39,18 @@ fun NotificationCard(notification: Notifiable, onClick: (Int) -> Unit) = Card(
         ),
     elevation = dimens.normalElevation,
     shape = cardShape,
-    backgroundColor = if (notification.checkedStatus) Color.Gray else MaterialTheme.colors.surface
+    backgroundColor = if (notification.checked) Color.Gray else MaterialTheme.colors.surface
 ) {
     Column(
         Modifier.padding(dimens.normalPadding)
     ) {
         Text(
-            "Пользователь ${notification.notifier.fullName} ${notification.action}.",
+            "Пользователь ${notification.author.toUser().fullName} ${notification.subject}.",
             style = titleText
         )
         Spacer(Modifier.height(dimens.articlePadding))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(notification.timeOfAction.formatCutToString(), style = graySmallText)
+            Text(notification.time.formatCutToString(), style = graySmallText)
             ClickableText(text = annotatedLinkString, onClick = onClick)
         }
 
