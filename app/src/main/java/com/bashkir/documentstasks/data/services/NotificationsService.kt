@@ -7,28 +7,28 @@ import com.bashkir.documentstasks.data.repositories.localdata.room.TaskDao
 import com.bashkir.documentstasks.utils.getAllPerforms
 import kotlinx.coroutines.flow.Flow
 import org.koin.java.KoinJavaComponent
+import java.time.LocalDateTime
 
 open class NotificationsService : SharedService() {
     private val notificationDao: NotificationDao by KoinJavaComponent.inject(NotificationDao::class.java)
 
     protected suspend fun TaskDao.notificationsWithTasks(tasks: List<Task>) {
+        notifyAboutDeleted(tasks)
         deleteNotUpToDate(tasks)
         notifyAboutNew(tasks)
         notifyAboutStatusChange(tasks)
     }
 
-    private suspend fun TaskDao.deleteNotUpToDate(upToDateTasks: List<Task>) =
+    private suspend fun deleteNotUpToDate(upToDateTasks: List<Task>) =
         upToDateTasks.getAllPerforms().let { performs ->
-            deleteAllPerformsNotIn(performs.map { it.id })
-            deleteAllNotIn(upToDateTasks.map { it.id })
             notificationDao.deleteAllNotIn(
                 performs.map { it.notificationId } + upToDateTasks.map { it.notificationId }
             )
         }
 
     private suspend fun TaskDao.notifyAboutNew(tasks: List<Task>) =
-        getTasksToDo(*getAllLocalTasks().map { it.toTask() }.toTypedArray()).let { oldTasksToDo ->
-            getTasksToDo(*tasks.toTypedArray())
+        getToDoTasks(preferences.authorizedId).map { it.toTask() }.let { oldTasksToDo ->
+            getTasksToDo(tasks)
                 .filter { !oldTasksToDo.contains(it) }
                 .let {
                     notificationDao.insertAll(
@@ -40,14 +40,29 @@ open class NotificationsService : SharedService() {
         }
 
     private suspend fun TaskDao.notifyAboutStatusChange(tasks: List<Task>) =
-        getAllPerforms().map { it.toPerform() }.forEach { perform ->
-            if (tasks.getAllPerforms()
-                    .find { it.id == perform.id }?.status != perform.status
-            )
-                notificationDao.insertAll(
-                    perform.toNotification("обновил статус выполнения задачи на ${perform.status.text}")
-                )
-        }
+        getIssuedTasks(preferences.authorizedId).map { it.toTask() }.getAllPerforms()
+            .forEach { perform ->
+                tasks.getAllPerforms()
+                    .find { it.id == perform.id }?.run {
+                        if (status != perform.status
+                        )
+                            notificationDao.insertAll(
+                                perform.toNotification("обновил статус выполнения задачи на ${perform.status.text}")
+                            )
+                    }
+            }
+
+    private suspend fun TaskDao.notifyAboutDeleted(tasks: List<Task>) =
+        getToDoTasks(preferences.authorizedId).map { it.toTask() }
+            .filter { task -> !tasks.map { it.id }.contains(task.id) }
+            .let { deletedTasks ->
+                notificationDao
+                    .insertAll(
+                        *deletedTasks
+                            .map { it.toNotification("удалил задание \"${it.title}\"", LocalDateTime.now()) }
+                            .toTypedArray()
+                    )
+            }
 
     fun loadAllNotifications(): Flow<List<Notification>> = notificationDao.loadAll()
 }

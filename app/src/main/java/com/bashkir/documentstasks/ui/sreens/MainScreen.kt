@@ -32,7 +32,7 @@ fun MainScreenBody(
     ) {
         Box(Modifier.padding(it)) {
             CreateBottomNavHost(
-                bottomBarNavController = bottomNavigationController,
+                bottomNavigationController,
                 navController,
                 tasksViewModel,
                 profileViewModel

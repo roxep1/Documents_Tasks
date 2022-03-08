@@ -9,6 +9,8 @@ class LocalUserPreferences(context: Context) {
     }
 
     private val sharedPref = context.getSharedPreferences(path, Context.MODE_PRIVATE)
+    val authorizedId
+        get() = sharedPref.all.filter { it.value as Boolean }.keys.first()
 
     fun authorizeUser(id: String) = sharedPref.edit {
         getAllUsersId().forEach {
@@ -19,8 +21,8 @@ class LocalUserPreferences(context: Context) {
         commit()
     }
 
-    fun logoutUser() = sharedPref.edit{
-        putBoolean(getAuthorizedId(), false)
+    fun logoutUser() = sharedPref.edit {
+        putBoolean(authorizedId, false)
         commit()
     }
 
@@ -31,6 +33,4 @@ class LocalUserPreferences(context: Context) {
             first()
         else null
     }
-
-    fun getAuthorizedId(): String = sharedPref.all.filter { it.value as Boolean }.keys.first()
 }

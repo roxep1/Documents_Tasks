@@ -9,5 +9,5 @@ class ProfileService : SharedService() {
     }
 
     suspend fun getAuthorizedUser(): User =
-        userDao.getLocalUser(preferences.getAuthorizedId()).toUser()
+        userDao.getLocalUser(preferences.authorizedId).toUser()
 }

@@ -9,19 +9,27 @@ class TasksService : NotificationsService() {
     private val taskDao: TaskDao by inject(TaskDao::class.java)
 
     suspend fun getAllTasks(): List<Task> =
-        api.getAllTasks(preferences.getAuthorizedId()).let { tasks ->
-            taskDao.run{
-                notificationsWithTasks(tasks)
-                insertAll(
-                    tasks.getAllPerforms().map { it.toEntity() },
-                    *tasks.map { it.toEntity() }.toTypedArray()
-                )
+        if (isOnline)
+            api.getAllTasks(preferences.authorizedId).let { tasks ->
+                doLocalWork(tasks)
+                tasks
             }
-            tasks
+        else taskDao.getAllLocalTasks().map { it.toTask() }
+
+    private suspend fun doLocalWork(tasks: List<Task>) =
+        taskDao.run {
+            notificationsWithTasks(tasks)
+            insertAll(
+                tasks.getAllPerforms().map { it.toEntity() },
+                *tasks.map { it.toEntity() }.toTypedArray()
+            )
+            deleteAllPerformsNotIn(tasks.getAllPerforms().map { it.id })
+            deleteAllNotIn(tasks.map { it.id })
         }
 
+
     suspend fun addTask(task: TaskForm) =
-        api.addTask(task.copy(author = UserForm(preferences.getAuthorizedId())))
+        api.addTask(task.copy(author = UserForm(preferences.authorizedId)))
 
     suspend fun inProgressTask(task: Task) = api.changePerformStatus(
         getMyPerform(task).id,
@@ -35,7 +43,7 @@ class TasksService : NotificationsService() {
 
     suspend fun addDocumentToTask(task: Task, doc: DocumentForm) = api.addDocumentToPerform(
         getMyPerform(task).id,
-        doc.copy(author = UserForm(preferences.getAuthorizedId()))
+        doc.copy(author = UserForm(preferences.authorizedId))
     )
 
     suspend fun addCommentToTask(task: Task, comment: String) = api.addCommentToPerform(

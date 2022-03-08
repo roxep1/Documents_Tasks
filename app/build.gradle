@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.airbnb.android:mavericks-compose:2.6.0'
 
     //Koin
-    def koin_version = "3.1.2"
+    def koin_version = "3.2.0-beta-1"
     implementation "io.insert-koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_version"
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
@@ -97,7 +97,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     //Room
-    def room_version = "2.4.1"
+    def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"

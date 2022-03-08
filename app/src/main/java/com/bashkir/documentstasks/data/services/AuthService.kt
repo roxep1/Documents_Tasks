@@ -3,6 +3,8 @@ package com.bashkir.documentstasks.data.services
 class AuthService : SharedService() {
 
     suspend fun authorizeUser(userId: String): String {
+        if (preferences.getAuthorizedIdIfExist() == userId && !isOnline)
+            return userId
         val user = api.getUser(userId)
         userDao.addLocalUser(user.toEntity())
         if (!isAuthorized(user.id))
