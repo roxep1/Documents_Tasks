@@ -13,8 +13,8 @@ import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.data.models.toForms
 import com.bashkir.documentstasks.ui.components.DeadlineView
 import com.bashkir.documentstasks.ui.components.cards.PerformersList
-import com.bashkir.documentstasks.ui.components.dialogs.DatePickerDialog
 import com.bashkir.documentstasks.ui.components.dialogs.AddPerformersDialog
+import com.bashkir.documentstasks.ui.components.dialogs.DatePickerDialog
 import com.bashkir.documentstasks.ui.components.dialogs.TimePickerDialog
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
@@ -85,7 +85,7 @@ fun AddTaskScreenBody(navController: NavController, viewModel: TasksViewModel) =
 
         AddPerformersDialog(usersDialogState, taskPerformers, users)
 
-        PerformersList(performers = taskPerformers) {
+        PerformersList(performers = taskPerformers, deleteUserOnClick = taskPerformers::remove) {
             Row(Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 OutlinedButton(onClick = {
                     usersDialogState.show()

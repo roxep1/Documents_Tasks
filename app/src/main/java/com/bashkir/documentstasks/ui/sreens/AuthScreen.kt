@@ -28,9 +28,6 @@ import com.bashkir.documentstasks.ui.theme.titleText
 import com.bashkir.documentstasks.utils.authNavigate
 import com.bashkir.documentstasks.viewmodels.AuthState
 import com.bashkir.documentstasks.viewmodels.AuthViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -56,12 +53,10 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
         }
 
         val authResultLauncher =
-            rememberLauncherForActivityResult(contract = GoogleApiContract()) {
-                onSignInResult(
-                    it,
-                    viewModel
-                )
-            }
+            rememberLauncherForActivityResult(
+                contract = GoogleApiContract(),
+                onResult = viewModel::onSignInResult
+            )
 
         if (userId is Loading)
             LoadingScreen()
@@ -90,18 +85,6 @@ private fun ConstraintLayoutScope.AuthButton(
         .padding(bottom = 32.dp),
     onClick = onClick
 )
-
-private fun onSignInResult(task: Task<GoogleSignInAccount>?, viewModel: AuthViewModel) =
-    try {
-        val account = task?.getResult(ApiException::class.java)
-        if (account != null) {
-            viewModel.setSignedUserId(account)
-        } else {
-            viewModel.setFailed()
-        }
-    } catch (e: ApiException) {
-        viewModel.setFailed(e)
-    }
 
 @Composable
 private fun ConstraintLayoutScope.ErrorText(

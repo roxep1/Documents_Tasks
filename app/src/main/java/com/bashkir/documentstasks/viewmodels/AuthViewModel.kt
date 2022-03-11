@@ -5,6 +5,8 @@ import com.airbnb.mvrx.*
 import com.bashkir.documentstasks.data.services.AuthService
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -27,7 +29,17 @@ class AuthViewModel(
 
     fun setUninitialized() = setState { copy(userId = Uninitialized) }
 
-    fun setSignedUserId(account: GoogleSignInAccount) = setSignedUserId(account.id!!)
+    private fun setSignedUserId(account: GoogleSignInAccount) = setSignedUserId(account.id!!)
+
+    fun onSignInResult(task: Task<GoogleSignInAccount>?) =
+        try {
+            val account = task?.getResult(ApiException::class.java)
+            if (account != null)
+                setSignedUserId(account)
+            else setFailed()
+        } catch (e: ApiException) {
+            setFailed(e)
+        }
 
     private fun setSignedUserId(id: String) = suspend {
         service.authorizeUser(id)
