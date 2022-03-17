@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bashkir.documentstasks.ui.components.MainBottomNavigationView
 import com.bashkir.documentstasks.ui.navigation.CreateBottomNavHost
+import com.bashkir.documentstasks.viewmodels.DocumentsViewModel
 import com.bashkir.documentstasks.viewmodels.ProfileViewModel
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
 
@@ -17,9 +18,10 @@ import com.bashkir.documentstasks.viewmodels.TasksViewModel
 fun MainScreenBody(
     navController: NavHostController,
     tasksViewModel: TasksViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    documentsViewModel: DocumentsViewModel
 ) {
-    OnCreate(tasksViewModel, profileViewModel)
+    OnCreate(tasksViewModel, profileViewModel, documentsViewModel)
 
     val bottomNavigationController = rememberNavController()
 
@@ -35,16 +37,18 @@ fun MainScreenBody(
                 bottomNavigationController,
                 navController,
                 tasksViewModel,
-                profileViewModel
+                profileViewModel,
+                documentsViewModel
             )
         }
     }
 }
 
 @Composable
-private fun OnCreate(tasksViewModel: TasksViewModel, profileViewModel: ProfileViewModel) =
+private fun OnCreate(tasksViewModel: TasksViewModel, profileViewModel: ProfileViewModel, documentsViewModel: DocumentsViewModel) =
     LaunchedEffect(true) {
         tasksViewModel.getAllTasks()
-        profileViewModel.getAuthorizedUser()
         tasksViewModel.getAllUsers()
+        documentsViewModel.getAllDocuments()
+        profileViewModel.getAuthorizedUser()
     }

@@ -43,6 +43,7 @@ private fun StartMainActivity() {
         authViewModel = mavericksActivityViewModel(),
         tasksViewModel = mavericksActivityViewModel(),
         profileViewModel = mavericksActivityViewModel(),
-        notificationsViewModel = mavericksActivityViewModel()
+        notificationsViewModel = mavericksActivityViewModel(),
+        documentsViewModel = mavericksActivityViewModel()
     )
 }

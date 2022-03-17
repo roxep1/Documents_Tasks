@@ -5,13 +5,15 @@ import java.time.LocalDateTime
 
 data class Familiarize(
     val id: Int,
-    val userId: String,
-    val documentId: Int,
+    val user: User,
+    val document: Document,
     @SerializedName("familiarized")
     val checked: Boolean,
     val created: LocalDateTime
-)
+): Documentable{
+    override fun toDocument(): Document = document
+}
 
 data class FamiliarizeForm(
-    val userId: String
+    val user: UserForm
 )

@@ -13,6 +13,15 @@ interface DocumentsTasksApi {
     @GET("user/{id}/tasks")
     suspend fun getAllTasks(@Path("id") userId: String): List<Task>
 
+    @GET("user/{id}/documents")
+    suspend fun getCreatedDocuments(@Path("id") userId: String): List<Document>
+
+    @GET("user/{id}/familiarizes")
+    suspend fun getAllFamiliarizes(@Path("id") userId: String): List<Familiarize>
+
+    @GET("user/{id}/agreements")
+    suspend fun getAllAgreements(@Path("id") userId: String): List<Agreement>
+
     @POST("task")
     suspend fun addTask(@Body task: TaskForm)
 
@@ -27,7 +36,4 @@ interface DocumentsTasksApi {
 
     @POST("document/perform/{id}")
     suspend fun addDocumentToPerform(@Path("id") performId: Int, @Body document: DocumentForm)
-
-    @PUT("task/status")
-    suspend fun inProgressAllPerforms(@Body performsId: List<Int>)
 }

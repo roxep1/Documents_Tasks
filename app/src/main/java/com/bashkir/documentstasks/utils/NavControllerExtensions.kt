@@ -1,7 +1,7 @@
 package com.bashkir.documentstasks.utils
 
-import android.util.Log
 import androidx.navigation.NavController
+import com.bashkir.documentstasks.data.models.Document
 import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.ui.navigation.Screen
 
@@ -12,7 +12,12 @@ fun NavController.navigate(task: Task) =
         )
     )
 
-
+fun NavController.navigate(document: Document) =
+    navigate(
+        Screen.DocumentDetail.destinationWithArgument(
+            document.id.toString()
+        )
+    )
 
 fun NavController.authNavigate() {
     navigate(

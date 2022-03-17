@@ -10,10 +10,7 @@ import com.bashkir.documentstasks.data.services.AuthService
 import com.bashkir.documentstasks.data.services.NotificationsService
 import com.bashkir.documentstasks.data.services.ProfileService
 import com.bashkir.documentstasks.data.services.TasksService
-import com.bashkir.documentstasks.viewmodels.AuthViewModel
-import com.bashkir.documentstasks.viewmodels.NotificationsViewModel
-import com.bashkir.documentstasks.viewmodels.ProfileViewModel
-import com.bashkir.documentstasks.viewmodels.TasksViewModel
+import com.bashkir.documentstasks.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -57,6 +54,7 @@ val viewModelModule = module {
     factory { params -> TasksViewModel(params.get(), get()) }
     factory { params -> NotificationsViewModel(params.get(), get()) }
     factory { params -> ProfileViewModel(params.get(), androidContext(), get()) }
+    factory { params -> DocumentsViewModel(params.get())}
 }
 
 val utilsModule = module {

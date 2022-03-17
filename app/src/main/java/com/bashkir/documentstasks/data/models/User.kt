@@ -14,6 +14,9 @@ data class User(
     val fullName: String
         get() = "$secondName $firstName ${middleName ?: ""}"
 
+    val shortFullName: String
+        get() = "$secondName ${firstName[0]}. ${middleName?.get(0)?.plus(".") ?: ""}"
+
     fun toForm(): UserForm = UserForm(id)
     fun toEntity(): UserEntity = UserEntity(id, firstName, secondName, middleName, email)
 }

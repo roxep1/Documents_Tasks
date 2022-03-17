@@ -74,6 +74,12 @@ val statusBlue = TextStyle(
     color = Color.Blue
 )
 
+val statusRed = TextStyle(
+    fontSize = dimens.titleText,
+    fontWeight = FontWeight.Bold,
+    color = Color.Red
+)
+
 val linkText = SpanStyle(
     color = Color.Blue,
     textDecoration = TextDecoration.Underline

@@ -14,54 +14,49 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.ui.components.AsyncView
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.buttons.AddFloatingButton
+import com.bashkir.documentstasks.ui.components.cards.DocumentCardList
 import com.bashkir.documentstasks.ui.components.cards.FilterSettingsCard
-import com.bashkir.documentstasks.ui.components.cards.TaskCardList
-import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
+import com.bashkir.documentstasks.ui.components.filters.DocumentFilterOption
 import com.bashkir.documentstasks.ui.components.topbars.ExtendedTopBarBottomNav
 import com.bashkir.documentstasks.ui.navigation.Screen
-import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
+import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.utils.navigate
-import com.bashkir.documentstasks.viewmodels.TasksState
-import com.bashkir.documentstasks.viewmodels.TasksViewModel
-
+import com.bashkir.documentstasks.viewmodels.DocumentsState
+import com.bashkir.documentstasks.viewmodels.DocumentsViewModel
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun TasksScreenBody(
-    navController: NavController,
-    viewModel: TasksViewModel
-) {
+fun DocumentsScreenBody(navController: NavController, viewModel: DocumentsViewModel) {
+
     val searchTextField = remember { mutableStateOf(TextFieldValue()) }
     val filterSettingsVisible = remember { mutableStateOf(false) }
-    val taskFilterOption = remember { mutableStateOf(TaskFilterOption.ALL) }
-    val tasks by viewModel.collectAsState(TasksState::tasks)
+    val documentFilterOption = remember { mutableStateOf(DocumentFilterOption.ALL) }
+    val documents by viewModel.collectAsState(DocumentsState::documents)
 
     Scaffold(
         topBar = { ExtendedTopBarBottomNav(navController, searchTextField, filterSettingsVisible) },
         floatingActionButton = {
             AddFloatingButton(
                 navController,
-                "Новое задание",
-                Screen.AddTask.destination
+                "Новый документ",
+                Screen.AddDocument.destination
             )
         })
     {
-        AsyncView(tasks, "Не удалось загрузить задачи") {
-            TaskCardList(
-                modifier = Modifier.padding(bottom = dimens.normalPadding),
+        AsyncView(documents, "Не удалось загрузить документы") {
+            DocumentCardList(
+                modifier = Modifier.padding(bottom = DocumentsTasksTheme.dimens.normalPadding),
                 onDetailsClick = navController::navigate,
-                tasks = viewModel.filterTasks(
+                documents = viewModel.filterDocuments(
                     it,
                     searchTextField.value.text,
-                    taskFilterOption.value
+                    documentFilterOption.value
                 )
             )
         }
 
         AnimateVertical(visible = filterSettingsVisible) {
-            FilterSettingsCard(taskFilterOption) {
-                filterSettingsVisible.value = false
-            }
+            FilterSettingsCard(documentFilterOption) { filterSettingsVisible.value = false }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.bashkir.documentstasks.utils
 
 import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.data.models.User
+import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
 
 fun List<Task>.filter(searchText: String): List<Task> = filter { task ->
     searchText.lowercase().let {
@@ -14,7 +15,7 @@ fun List<Task>.filter(searchText: String): List<Task> = filter { task ->
 
 fun Set<Task>.filter(searchText: String): List<Task> = this.toList().filter(searchText)
 
-fun Map<Task, Boolean>.filter(searchText: String): Map<Task, Boolean> =
+fun Map<Task, TaskFilterOption>.filter(searchText: String): Map<Task, TaskFilterOption> =
     keys.filter(searchText).associateWith { this[it]!! }
 
 @JvmName("filterUser")

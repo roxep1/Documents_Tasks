@@ -6,7 +6,8 @@ import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.data.models.TaskForm
 import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.data.services.TasksService
-import com.bashkir.documentstasks.ui.components.cards.TaskFilterOption
+import com.bashkir.documentstasks.ui.components.filters.FilterOption
+import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
 import com.bashkir.documentstasks.utils.filter
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -34,12 +35,12 @@ class TasksViewModel(initialState: TasksState, private val service: TasksService
         tasks: List<Task>,
         searchText: String,
         filterOption: TaskFilterOption
-    ): Map<Task, Boolean> =
+    ): Map<Task, TaskFilterOption> =
         when (filterOption) {
-            TaskFilterOption.ALL -> tasks.associateWith { issuedTasks.contains(it) }
+            TaskFilterOption.ALL -> tasks.associateWith { if(issuedTasks.contains(it)) TaskFilterOption.ISSUED else TaskFilterOption.MY }
             TaskFilterOption.MY -> tasks.filter { !issuedTasks.contains(it) }
-                .associateWith { false }
-            TaskFilterOption.ISSUED -> issuedTasks.associateWith { true }
+                .associateWith { TaskFilterOption.MY }
+            TaskFilterOption.ISSUED -> issuedTasks.associateWith { TaskFilterOption.ISSUED }
         }.filter(searchText)
 
     fun isIssuedTask(task: Task): Boolean = issuedTasks.contains(task)

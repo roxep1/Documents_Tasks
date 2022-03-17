@@ -25,7 +25,7 @@ class AuthViewModel(
 
     fun setLoading() = setState { copy(userId = Loading()) }
 
-    fun setFailed(e: Throwable = Throwable()) = setState { copy(userId = Fail(e)) }
+    private fun setFailed(e: Throwable = Throwable()) = setState { copy(userId = Fail(e)) }
 
     fun setUninitialized() = setState { copy(userId = Uninitialized) }
 

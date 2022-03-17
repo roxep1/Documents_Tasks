@@ -28,8 +28,7 @@ class ProfileViewModel(
         override fun create(
             viewModelContext: ViewModelContext,
             state: ProfileState
-        ): ProfileViewModel =
-            get { parametersOf(state) }
+        ): ProfileViewModel = get { parametersOf(state) }
     }
 }
 

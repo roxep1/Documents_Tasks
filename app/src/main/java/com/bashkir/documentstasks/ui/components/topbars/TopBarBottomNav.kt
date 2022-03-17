@@ -16,7 +16,7 @@ fun TopBarBottomNav(
     navController: NavController,
     titleText : String = "",
     searchTextFieldValue: MutableState<TextFieldValue>? = null,
-    actions : @Composable RowScope.() -> Unit = {}
+    filterSettingsVisible: MutableState<Boolean>? = null
 ) =
     TopBar(
         titleText = titleText,
@@ -24,7 +24,19 @@ fun TopBarBottomNav(
         isBackIcon = false,
         leftIcon = { NotificationsIcon(navController = navController) },
         searchTextState = searchTextFieldValue,
-        actions = actions
+        actions = {
+            filterSettingsVisible?.let{
+                IconButton(onClick = {
+                    filterSettingsVisible.value = !filterSettingsVisible.value
+                }) {
+                    Icon(
+                        if (filterSettingsVisible.value) painterResource(R.drawable.ic_arrow_up)
+                        else painterResource(R.drawable.ic_arrow_down),
+                        ""
+                    )
+                }
+            }
+        }
     )
 
 @Composable

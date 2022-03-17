@@ -12,7 +12,9 @@ data class Document(
     val templateId: String? = null,
     val familiarize: List<Familiarize> = listOf(),
     val agreement: List<Agreement> = listOf()
-) {
+): Documentable {
+    override fun toDocument(): Document = this
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
