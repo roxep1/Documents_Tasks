@@ -7,4 +7,3 @@ enum class TaskFilterOption(private val option: String): FilterOption {
 
     override fun getOption(): String = option
 }
-

@@ -1,5 +1,7 @@
 package com.bashkir.documentstasks.data.models
 
+import com.bashkir.documentstasks.utils.LocalDateTimeJsonAdapter
+import com.google.gson.annotations.JsonAdapter
 import java.time.LocalDateTime
 
 data class Document(
@@ -7,6 +9,8 @@ data class Document(
     val author: User,
     val title: String,
     val file: ByteArray,
+
+    @JsonAdapter(LocalDateTimeJsonAdapter::class)
     val created: LocalDateTime,
     val desc: String? = null,
     val templateId: String? = null,

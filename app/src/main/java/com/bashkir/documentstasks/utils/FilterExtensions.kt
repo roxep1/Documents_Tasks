@@ -1,5 +1,6 @@
 package com.bashkir.documentstasks.utils
 
+import com.bashkir.documentstasks.data.models.Documentable
 import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
@@ -25,5 +26,15 @@ fun List<User>.filter(searchText: String): List<User> = filter { user ->
             user.email.lowercase().contains(it) ||
                     user.fullName.lowercase().contains(it)
         else true
+    }
+}
+
+@JvmName("filterDocumentable")
+fun List<Documentable>.filter(text: String): List<Documentable> = filter {
+    it.toDocument().run {
+        author.fullName.contains(text) ||
+                title.contains(text) ||
+                desc?.contains(text)?:false ||
+                templateId?.contains(text)?:false
     }
 }

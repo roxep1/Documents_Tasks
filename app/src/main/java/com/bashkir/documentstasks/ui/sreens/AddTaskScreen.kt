@@ -11,7 +11,7 @@ import com.bashkir.documentstasks.data.models.PerformForm
 import com.bashkir.documentstasks.data.models.TaskForm
 import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.data.models.toForms
-import com.bashkir.documentstasks.ui.components.DeadlineView
+import com.bashkir.documentstasks.ui.components.views.DeadlineView
 import com.bashkir.documentstasks.ui.components.cards.PerformersList
 import com.bashkir.documentstasks.ui.components.dialogs.AddPerformersDialog
 import com.bashkir.documentstasks.ui.components.dialogs.DatePickerDialog

@@ -21,9 +21,9 @@ import com.airbnb.mvrx.Fail
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.compose.collectAsState
-import com.bashkir.documentstasks.google.GoogleApiContract
+import com.bashkir.documentstasks.contracts.GoogleApiContract
 import com.bashkir.documentstasks.ui.components.LoadingScreen
-import com.bashkir.documentstasks.ui.components.SignInGoogleButton
+import com.bashkir.documentstasks.ui.components.buttons.SignInGoogleButton
 import com.bashkir.documentstasks.ui.theme.titleText
 import com.bashkir.documentstasks.utils.authNavigate
 import com.bashkir.documentstasks.viewmodels.AuthState
@@ -57,6 +57,8 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
                 contract = GoogleApiContract(),
                 onResult = viewModel::onSignInResult
             )
+
+
 
         if (userId is Loading)
             LoadingScreen()

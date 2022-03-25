@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import com.airbnb.mvrx.Async
 import com.bashkir.documentstasks.data.models.User
-import com.bashkir.documentstasks.ui.components.AsyncView
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.SearchTextField
 import com.bashkir.documentstasks.ui.components.cards.UserCard
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme

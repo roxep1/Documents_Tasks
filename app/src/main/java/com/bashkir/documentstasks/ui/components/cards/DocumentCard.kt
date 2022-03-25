@@ -10,24 +10,22 @@ import com.bashkir.documentstasks.data.models.Agreement
 import com.bashkir.documentstasks.data.models.Document
 import com.bashkir.documentstasks.data.models.Documentable
 import com.bashkir.documentstasks.data.models.Familiarize
-import com.bashkir.documentstasks.ui.components.filters.DocumentFilterOption
 import com.bashkir.documentstasks.ui.components.views.AgreementsView
 
 @Composable
 fun DocumentCardList(
     modifier: Modifier = Modifier,
-    documents: Map<Documentable, DocumentFilterOption>,
+    documents: List<Documentable>,
     onDetailsClick: (Document) -> Unit
 ) = LazyColumn(modifier = modifier.fillMaxSize()) {
-    items(documents.toList()) { (document, filterOption) ->
-        DocumentCard(document, filterOption) { onDetailsClick(document.toDocument()) }
+    items(documents.toList()) { document ->
+        DocumentCard(document) { onDetailsClick(document.toDocument()) }
     }
 }
 
 @Composable
 fun DocumentCard(
     document: Documentable,
-    filterOption: DocumentFilterOption,
     onDetailsClick: () -> Unit
 ) =
     document.toDocument().let {
@@ -36,17 +34,17 @@ fun DocumentCard(
             desc = it.desc,
             author = it.author,
             pubDate = it.created,
-            expandingButtonText = if (filterOption == DocumentFilterOption.ISSUED) "Согласования: " else "Подробнее",
+            expandingButtonText = if (document is Agreement) "Согласования: " else "Подробнее",
             mainInfo = {
                 MainInfo {
                     if (document is Agreement)
                         Text("Необходимо согласовать до ${document.deadline}")
                     else if (document is Familiarize)
-                        Text("Необходимо ознакомиться")
+                        Text("Ознакомиться")
                 }
             },
             expandedInfo = {
-                if (filterOption == DocumentFilterOption.ISSUED && document is Document)
+                if (document is Document)
                     document.agreement.AgreementsView()
             },
             onDetailsClick = onDetailsClick

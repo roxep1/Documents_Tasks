@@ -1,4 +1,4 @@
-package com.bashkir.documentstasks.google
+package com.bashkir.documentstasks.contracts
 
 import android.app.Activity
 import android.content.Context
@@ -15,7 +15,6 @@ class GoogleApiContract : ActivityResultContract<Int, Task<GoogleSignInAccount>?
     override fun createIntent(context: Context, input: Int): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
-//            .requestIdToken(context.getString(R.string.google_cloud_server_client_id))
             .build()
 
         val intent = GoogleSignIn.getClient(context, gso)
@@ -24,9 +23,7 @@ class GoogleApiContract : ActivityResultContract<Int, Task<GoogleSignInAccount>?
 
     override fun parseResult(resultCode: Int, intent: Intent?): Task<GoogleSignInAccount>? =
         when (resultCode) {
-            Activity.RESULT_OK -> {
-                GoogleSignIn.getSignedInAccountFromIntent(intent)
-            }
+            Activity.RESULT_OK -> GoogleSignIn.getSignedInAccountFromIntent(intent)
             else -> null
         }
 }

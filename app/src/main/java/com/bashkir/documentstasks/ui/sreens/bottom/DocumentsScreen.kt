@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
-import com.bashkir.documentstasks.ui.components.AsyncView
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.buttons.AddFloatingButton
 import com.bashkir.documentstasks.ui.components.cards.DocumentCardList
@@ -41,8 +41,7 @@ fun DocumentsScreenBody(navController: NavController, viewModel: DocumentsViewMo
                 "Новый документ",
                 Screen.AddDocument.destination
             )
-        })
-    {
+        }) {
         AsyncView(documents, "Не удалось загрузить документы") {
             DocumentCardList(
                 modifier = Modifier.padding(bottom = DocumentsTasksTheme.dimens.normalPadding),

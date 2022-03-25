@@ -16,7 +16,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.PerformStatus.*
 import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.ui.components.AsyncView
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.dialogs.AddCommentDialog
 import com.bashkir.documentstasks.ui.components.dialogs.CompleteTaskDialog
 import com.bashkir.documentstasks.ui.components.topbars.TopBar

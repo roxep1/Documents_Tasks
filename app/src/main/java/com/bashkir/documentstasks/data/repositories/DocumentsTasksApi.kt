@@ -22,6 +22,22 @@ interface DocumentsTasksApi {
     @GET("user/{id}/agreements")
     suspend fun getAllAgreements(@Path("id") userId: String): List<Agreement>
 
+    @PUT("document/familiarize/{id}")
+    suspend fun familiarize(@Path("id") familiarizeId: Int)
+
+    @PUT("document/agreement/{id}")
+    suspend fun agreed(@Path("id") agreementId: Int, @Body agreementStatus: AgreementStatus)
+
+    @PUT("document/agreement/{id}")
+    suspend fun agreedWithComment(
+        @Path("id") agreementId: Int,
+        @Body agreementStatus: AgreementStatus,
+        @Query("comment") comment: String
+    )
+
+    @POST("document")
+    suspend fun addDocument(@Body document: DocumentForm)
+
     @POST("task")
     suspend fun addTask(@Body task: TaskForm)
 
