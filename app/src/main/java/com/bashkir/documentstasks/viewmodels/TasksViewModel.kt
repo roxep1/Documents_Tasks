@@ -23,11 +23,16 @@ class TasksViewModel(initialState: TasksState, private val service: TasksService
         })
     }
 
-    fun getAllTasks() = suspend {
+    fun onCreate() {
+        getAllTasks()
+        getAllUsers()
+    }
+
+    private fun getAllTasks() = suspend {
         service.getAllTasks()
     }.execute { copy(tasks = it) }
 
-    fun getAllUsers() = suspend {
+    private fun getAllUsers() = suspend {
         service.getAllUsers()
     }.execute { copy(users = it) }
 

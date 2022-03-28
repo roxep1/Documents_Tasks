@@ -11,12 +11,12 @@ import com.bashkir.documentstasks.data.models.PerformForm
 import com.bashkir.documentstasks.data.models.TaskForm
 import com.bashkir.documentstasks.data.models.User
 import com.bashkir.documentstasks.data.models.toForms
-import com.bashkir.documentstasks.ui.components.views.DeadlineView
-import com.bashkir.documentstasks.ui.components.cards.PerformersList
-import com.bashkir.documentstasks.ui.components.dialogs.AddPerformersDialog
+import com.bashkir.documentstasks.ui.components.cards.UsersList
+import com.bashkir.documentstasks.ui.components.dialogs.AddUserDialog
 import com.bashkir.documentstasks.ui.components.dialogs.DatePickerDialog
 import com.bashkir.documentstasks.ui.components.dialogs.TimePickerDialog
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
+import com.bashkir.documentstasks.ui.components.views.DeadlineView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.placeHolderText
 import com.bashkir.documentstasks.ui.theme.titleText
@@ -62,11 +62,10 @@ fun AddTaskScreenBody(navController: NavController, viewModel: TasksViewModel) =
         )
 
         OutlinedTextField(
+            modifier = Modifier.padding(bottom = dimens.normalPadding),
             value = taskDesc,
             onValueChange = { taskDesc = it },
-            modifier = Modifier.padding(bottom = dimens.normalPadding),
             placeholder = { Text("Описание", style = placeHolderText) }
-
         )
 
         DeadlineView(
@@ -83,9 +82,9 @@ fun AddTaskScreenBody(navController: NavController, viewModel: TasksViewModel) =
             taskDeadLine = taskDeadLine.plus(it)
         }
 
-        AddPerformersDialog(usersDialogState, taskPerformers, users)
+        AddUserDialog(usersDialogState, taskPerformers, users)
 
-        PerformersList(performers = taskPerformers, deleteUserOnClick = taskPerformers::remove) {
+        UsersList(users = taskPerformers, deleteUserOnClick = taskPerformers::remove, label = "Исполнители") {
             Row(Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 OutlinedButton(onClick = {
                     usersDialogState.show()

@@ -56,7 +56,7 @@ fun CreateMainNavHost(
         }
 
         composable(Screen.AddDocument.destination) {
-            AddDocumentScreenBody()
+            AddDocumentScreenBody(navController, documentsViewModel)
         }
     }
 

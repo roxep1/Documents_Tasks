@@ -45,10 +45,12 @@ fun MainScreenBody(
 }
 
 @Composable
-private fun OnCreate(tasksViewModel: TasksViewModel, profileViewModel: ProfileViewModel, documentsViewModel: DocumentsViewModel) =
-    LaunchedEffect(true) {
-        tasksViewModel.getAllTasks()
-        tasksViewModel.getAllUsers()
-        documentsViewModel.getAllDocuments()
-        profileViewModel.getAuthorizedUser()
-    }
+private fun OnCreate(
+    tasksViewModel: TasksViewModel,
+    profileViewModel: ProfileViewModel,
+    documentsViewModel: DocumentsViewModel
+) = LaunchedEffect(true) {
+    tasksViewModel.onCreate()
+    documentsViewModel.onCreate()
+    profileViewModel.getAuthorizedUser()
+}

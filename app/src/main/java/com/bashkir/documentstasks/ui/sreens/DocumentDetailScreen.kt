@@ -3,22 +3,21 @@ package com.bashkir.documentstasks.ui.sreens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.data.models.*
-import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.buttons.StyledTextButton
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
 import com.bashkir.documentstasks.ui.components.views.AgreementsView
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.utils.formatToString
 import com.bashkir.documentstasks.viewmodels.DocumentsViewModel
@@ -50,7 +49,6 @@ private fun DocumentDetailView(document: Documentable, viewModel: DocumentsViewM
     Column(
         Modifier
             .padding(dimens.normalPadding)
-            .verticalScroll(rememberScrollState())
             .fillMaxSize()
     ) {
         document.toDocument().run {
@@ -63,6 +61,7 @@ private fun DocumentDetailView(document: Documentable, viewModel: DocumentsViewM
             }
         }
         StyledTextButton(
+            Modifier.align(CenterHorizontally),
             "Скачать документ",
             onClick = { viewModel.downloadDocument(document.toDocument()) }
         )
@@ -114,7 +113,7 @@ private fun ColumnScope.AgreementView(agreement: Agreement, viewModel: Documents
             "Необходимо принять решение о согласовании до: ${agreement.deadline.formatToString()}",
             fontWeight = FontWeight.Bold
         )
-        else -> Row {
+        else -> {
             Text("Вы уже приняли решение о согласовании: ", fontWeight = FontWeight.Bold)
             Spacer(Modifier.width(dimens.articlePadding))
             Text(agreement.status.text, style = agreement.status.textStyle)
@@ -124,21 +123,24 @@ private fun ColumnScope.AgreementView(agreement: Agreement, viewModel: Documents
         Spacer(modifier = Modifier.height(dimens.normalPadding))
         Text("Вы оставили комментарий к выполнению:\n${agreement.comment}")
     }
-    if (agreement.status != AgreementStatus.Agreed)
-        OutlinedButton(
-            onClick = agreedDialogState::show,
-            Modifier.align(CenterHorizontally)
-        ) {
-            Text("Согласовать")
-        }
+    Row{
+        if (agreement.status != AgreementStatus.Agreed)
+            OutlinedButton(
+                onClick = agreedDialogState::show,
+                Modifier.weight(1F)
+            ) {
+                Text("Согласовать")
+            }
 
-    if (agreement.status != AgreementStatus.Declined)
-        OutlinedButton(
-            onClick = declineDialogState::show,
-            Modifier.align(CenterHorizontally)
-        ) {
-            Text("Отказать в согласовании")
-        }
+        if (agreement.status != AgreementStatus.Declined)
+            OutlinedButton(
+                onClick = declineDialogState::show,
+                Modifier.weight(1F)
+            ) {
+                Text("Отказать в согласовании")
+            }
+    }
+
 
     AgreementStatusChangeDialog(dialogState = agreedDialogState) { comment ->
         if (comment != null && comment.isNotBlank())

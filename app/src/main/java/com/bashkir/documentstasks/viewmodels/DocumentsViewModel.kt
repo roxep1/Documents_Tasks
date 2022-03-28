@@ -1,10 +1,7 @@
 package com.bashkir.documentstasks.viewmodels
 
 import com.airbnb.mvrx.*
-import com.bashkir.documentstasks.data.models.Agreement
-import com.bashkir.documentstasks.data.models.Document
-import com.bashkir.documentstasks.data.models.Documentable
-import com.bashkir.documentstasks.data.models.Familiarize
+import com.bashkir.documentstasks.data.models.*
 import com.bashkir.documentstasks.data.services.DocumentsService
 import com.bashkir.documentstasks.ui.components.filters.DocumentFilterOption
 import com.bashkir.documentstasks.ui.components.filters.DocumentFilterOption.*
@@ -16,7 +13,12 @@ import org.koin.core.parameter.parametersOf
 class DocumentsViewModel(initialState: DocumentsState, private val service: DocumentsService) :
     MavericksViewModel<DocumentsState>(initialState) {
 
-    fun getAllDocuments() = suspend {
+    fun onCreate() {
+        getAllDocuments()
+        getAllUsers()
+    }
+
+    private fun getAllDocuments() = suspend {
         service.getAllDocuments()
     }.execute { copy(documents = it) }
 
@@ -40,7 +42,7 @@ class DocumentsViewModel(initialState: DocumentsState, private val service: Docu
         TODO()
     }
 
-    fun agreedDocument(agreement: Agreement, comment: String){
+    fun agreedDocument(agreement: Agreement, comment: String) {
         TODO()
     }
 
@@ -48,17 +50,25 @@ class DocumentsViewModel(initialState: DocumentsState, private val service: Docu
         TODO("Not yet implemented")
     }
 
-    fun declineDocument(agreement: Agreement, comment: String){
+    fun declineDocument(agreement: Agreement, comment: String) {
         TODO()
     }
 
-    fun updateDocument(){
+    fun updateDocument() {
         TODO()
     }
 
     fun familiarizeDocument(familiarize: Familiarize) {
         TODO("Not yet implemented")
     }
+
+    fun uploadDocument(): ByteArray {
+        TODO()
+    }
+
+    private fun getAllUsers() = suspend {
+        service.getAllUsers()
+    }.execute { copy(users = it) }
 
     companion object : MavericksViewModelFactory<DocumentsViewModel, DocumentsState>,
         KoinComponent {
@@ -69,4 +79,7 @@ class DocumentsViewModel(initialState: DocumentsState, private val service: Docu
     }
 }
 
-data class DocumentsState(val documents: Async<List<Documentable>> = Uninitialized) : MavericksState
+data class DocumentsState(
+    val documents: Async<List<Documentable>> = Uninitialized,
+    val users: Async<List<User>> = Uninitialized
+) : MavericksState

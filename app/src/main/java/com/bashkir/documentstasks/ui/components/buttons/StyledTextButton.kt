@@ -8,10 +8,10 @@ import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.ui.theme.titleText
 
 @Composable
-fun StyledTextButton(text: String, label: String? = null, onClick: () -> Unit = {}) {
+fun StyledTextButton(modifier: Modifier = Modifier, text: String, label: String? = null, onClick: () -> Unit = {}) {
     label?.let { Text(label, style = titleText) }
     androidx.compose.material.TextButton(
-        modifier = Modifier.padding(end = DocumentsTasksTheme.dimens.normalPadding),
+        modifier = modifier.padding(end = DocumentsTasksTheme.dimens.normalPadding),
         onClick = onClick
     ) {
         Text(text = text, style = titleText)

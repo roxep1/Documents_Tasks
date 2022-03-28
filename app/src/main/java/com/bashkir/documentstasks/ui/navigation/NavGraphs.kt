@@ -13,17 +13,17 @@ sealed class BottomNavScreen(val destination: String, val icon: @Composable () -
 
     object Tasks : BottomNavScreen(
         "tasks",
-        { Icon(painterResource(id = R.drawable.ic_tasks), null) }
+        icon = { Icon(painterResource(id = R.drawable.ic_tasks), null) }
     )
 
     object Profile : BottomNavScreen(
         "profile",
-        { Icon(Icons.Default.Person, null) }
+        icon = { Icon(Icons.Default.Person, null) }
     )
 
     object Documents : BottomNavScreen(
         "documents",
-        { Icon(Icons.Default.List, null)}
+        icon = { Icon(Icons.Default.List, null)}
     )
 
     companion object{

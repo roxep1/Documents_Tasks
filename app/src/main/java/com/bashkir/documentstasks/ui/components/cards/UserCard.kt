@@ -57,19 +57,19 @@ fun UserCard(
     }
 
 @Composable
-fun PerformersList(
-    performers: List<User>,
+fun UsersList(
+    users: List<User>,
     deleteUserOnClick: ((User) -> Unit)? = null,
-    addPerformerBtn: @Composable LazyItemScope.() -> Unit = {}
+    label: String = "Пользователи",
+    addUserBtn: @Composable LazyItemScope.() -> Unit = {}
 ) = Column {
-    Label("Исполнители: ")
+    Label("$label: ")
     LazyColumn(
         Modifier
-            .fillMaxWidth()
-            .requiredHeight(dimens.maxListHeight)
+            .fillMaxSize()
             .padding(top = dimens.articlePadding)
     ) {
-        items(performers) { user ->
+        items(users) { user ->
             UserCard(
                 Modifier.padding(top = dimens.articlePadding),
                 user = user,
@@ -78,6 +78,6 @@ fun PerformersList(
                 } else null
             )
         }
-        item(content = addPerformerBtn)
+        item(content = addUserBtn)
     }
 }

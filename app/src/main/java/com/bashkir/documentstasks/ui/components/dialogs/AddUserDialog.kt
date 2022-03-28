@@ -22,7 +22,7 @@ import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.customView
 
 @Composable
-fun AddPerformersDialog(
+fun AddUserDialog(
     dialogState: MaterialDialogState,
     addedPerformers: SnapshotStateList<User>,
     allUsers: Async<List<User>>
