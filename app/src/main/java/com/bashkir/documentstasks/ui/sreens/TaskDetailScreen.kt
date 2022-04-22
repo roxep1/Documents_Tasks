@@ -39,8 +39,8 @@ fun TaskDetailScreenBody(taskId: Int, navController: NavController, viewModel: T
     Scaffold(
         topBar = { TopBar(titleText = title, navController = navController) }
     ) {
-        AsyncView(tasks, "Не удалось загрузить задачи") {
-            it.find { task -> task.id == taskId }?.let { task ->
+        AsyncView(tasks, "Не удалось загрузить задачи") { loadedTasks, _ ->
+            loadedTasks.find { task -> task.id == taskId }?.let { task ->
                 title = task.title
                 TaskDetailView(task = task, viewModel, viewModel.isIssuedTask(task), navController)
             }

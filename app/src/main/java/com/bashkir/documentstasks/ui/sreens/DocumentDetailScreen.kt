@@ -1,5 +1,6 @@
 package com.bashkir.documentstasks.ui.sreens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,13 +8,14 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
+import com.bashkir.documentstasks.contracts.DocumentCreateContract
 import com.bashkir.documentstasks.data.models.*
+import com.bashkir.documentstasks.ui.components.Label
 import com.bashkir.documentstasks.ui.components.buttons.StyledTextButton
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
 import com.bashkir.documentstasks.ui.components.views.AgreementsView
@@ -35,8 +37,11 @@ fun DocumentDetailScreenBody(
     Scaffold(
         topBar = { TopBar(title, navController) }
     ) {
-        AsyncView(async = documents, errorText = "Неудалось загрузить документы") {
-            it.find { document -> document.toDocument().id == documentId }?.let { document ->
+        AsyncView(
+            async = documents,
+            errorText = "Неудалось загрузить документы"
+        ) { loadedDocuments, _ ->
+            loadedDocuments.find { document -> document.toDocument().id == documentId }?.let { document ->
                 title = document.toDocument().title
                 DocumentDetailView(document, viewModel)
             }
@@ -53,17 +58,27 @@ private fun DocumentDetailView(document: Documentable, viewModel: DocumentsViewM
     ) {
         document.toDocument().run {
             desc?.let {
-                Text(desc)
-                Spacer(Modifier.height(dimens.normalPadding))
+                if (desc.isNotBlank()) {
+                    Text(desc)
+                    Spacer(Modifier.height(dimens.normalPadding))
+                }
             }
             templateId?.let {
-                Text(templateId, fontWeight = FontWeight.Bold)
+                Row {
+                    Text("Шаблон документа: ")
+                    Text(templateId, fontWeight = FontWeight.Bold)
+                }
             }
         }
+        val downloadDocLauncher =
+            rememberLauncherForActivityResult(
+                contract = DocumentCreateContract(),
+                onResult = { viewModel.downloadDocument(document.toDocument(), it) }
+            )
         StyledTextButton(
             Modifier.align(CenterHorizontally),
             "Скачать документ",
-            onClick = { viewModel.downloadDocument(document.toDocument()) }
+            onClick = { downloadDocLauncher.launch(document.toDocument()) }
         )
 
         when (document) {
@@ -87,24 +102,30 @@ private fun ColumnScope.FamiliarizeView(familiarize: Familiarize, viewModel: Doc
 
 @Composable
 private fun ColumnScope.DocumentView(document: Document, viewModel: DocumentsViewModel) {
-    OutlinedButton(onClick = viewModel::updateDocument, Modifier.align(CenterHorizontally)) {
+    OutlinedButton(
+        onClick = { /*viewModel::updateDocument*/ },
+        Modifier.align(CenterHorizontally)
+    ) {
         Text("Обновить документ")
     }
+    Label("На согласование отправлено:")
     document.agreement.AgreementsView()
     Spacer(Modifier.height(dimens.normalPadding))
-    Text("На ознакомление отправлено:")
-    LazyColumn(Modifier.align(CenterHorizontally)) {
-        items(document.familiarize) { familiarize ->
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(familiarize.user.fullName)
-                Text(if (familiarize.checked) "Ознакомлен" else "Не ознакомлен")
+    if (document.familiarize.isNotEmpty()) {
+        Label("На ознакомление отправлено:")
+        LazyColumn(Modifier.align(CenterHorizontally)) {
+            items(document.familiarize) { familiarize ->
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(familiarize.user.fullName)
+                    Text(if (familiarize.checked) "Ознакомлен" else "Не ознакомлен")
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.AgreementView(agreement: Agreement, viewModel: DocumentsViewModel) {
+private fun AgreementView(agreement: Agreement, viewModel: DocumentsViewModel) {
     val agreedDialogState = rememberMaterialDialogState()
     val declineDialogState = rememberMaterialDialogState()
 
@@ -123,7 +144,7 @@ private fun ColumnScope.AgreementView(agreement: Agreement, viewModel: Documents
         Spacer(modifier = Modifier.height(dimens.normalPadding))
         Text("Вы оставили комментарий к выполнению:\n${agreement.comment}")
     }
-    Row{
+    Row {
         if (agreement.status != AgreementStatus.Agreed)
             OutlinedButton(
                 onClick = agreedDialogState::show,
@@ -140,7 +161,6 @@ private fun ColumnScope.AgreementView(agreement: Agreement, viewModel: Documents
                 Text("Отказать в согласовании")
             }
     }
-
 
     AgreementStatusChangeDialog(dialogState = agreedDialogState) { comment ->
         if (comment != null && comment.isNotBlank())

@@ -18,6 +18,10 @@ class NotificationsViewModel(
     private fun loadNotifications() =
         service.loadAllNotifications().execute { copy(notifications = it) }
 
+    fun deleteNotification(notification: Notification) = suspend {
+        service.deleteNotification(notification)
+    }.execute { copy() }
+
     companion object : MavericksViewModelFactory<NotificationsViewModel, NotificationsState>,
         KoinComponent {
         override fun create(

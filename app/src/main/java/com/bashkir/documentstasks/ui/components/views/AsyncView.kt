@@ -8,10 +8,16 @@ import com.airbnb.mvrx.Success
 import com.bashkir.documentstasks.ui.components.LoadingScreen
 
 @Composable
-fun <T> AsyncView(async: Async<T>, errorText: String, onSuccess: @Composable (T) -> Unit) =
+fun <T> AsyncView(async: Async<T>, errorText: String, onSuccess: @Composable (T, Boolean) -> Unit) =
     when (async) {
-        is Success -> onSuccess(async())
-        is Loading -> LoadingScreen()
+        is Success -> onSuccess(async(), false)
+        is Loading ->
+            async().let { data ->
+                if (data == null)
+                    LoadingScreen()
+                else
+                    onSuccess(data, true)
+            }
         is Fail -> ErrorView(errorText, async)
         else -> ErrorView(errorText)
     }

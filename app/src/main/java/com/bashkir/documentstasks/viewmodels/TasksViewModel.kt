@@ -28,9 +28,9 @@ class TasksViewModel(initialState: TasksState, private val service: TasksService
         getAllUsers()
     }
 
-    private fun getAllTasks() = suspend {
+    fun getAllTasks() = suspend {
         service.getAllTasks()
-    }.execute { copy(tasks = it) }
+    }.execute(retainValue = TasksState::tasks) { copy(tasks = it) }
 
     private fun getAllUsers() = suspend {
         service.getAllUsers()
@@ -46,6 +46,7 @@ class TasksViewModel(initialState: TasksState, private val service: TasksService
             TaskFilterOption.MY -> tasks.filter { !issuedTasks.contains(it) }
                 .associateWith { TaskFilterOption.MY }
             TaskFilterOption.ISSUED -> issuedTasks.associateWith { TaskFilterOption.ISSUED }
+            else -> tasks.associateWith { TaskFilterOption.COMPLETED }
         }.filter(searchText)
 
     fun isIssuedTask(task: Task): Boolean = issuedTasks.contains(task)

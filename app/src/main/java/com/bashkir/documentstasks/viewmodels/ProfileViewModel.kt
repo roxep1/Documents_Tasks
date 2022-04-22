@@ -32,7 +32,6 @@ class ProfileViewModel(
     }
 }
 
-
 data class ProfileState(
     val user: Async<User> = Uninitialized
 ) : MavericksState

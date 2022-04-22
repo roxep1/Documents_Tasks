@@ -10,14 +10,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
+import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.compose.collectAsState
-import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.buttons.AddFloatingButton
 import com.bashkir.documentstasks.ui.components.cards.FilterSettingsCard
 import com.bashkir.documentstasks.ui.components.cards.TaskCardList
 import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
 import com.bashkir.documentstasks.ui.components.topbars.ExtendedTopBarBottomNav
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.navigation.Screen
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.utils.navigate
@@ -46,15 +47,18 @@ fun TasksScreenBody(
             )
         })
     {
-        AsyncView(tasks, "Не удалось загрузить задачи") {
+
+        AsyncView(tasks, "Не удалось загрузить задачи") {loadedTasks, isLoading ->
             TaskCardList(
                 modifier = Modifier.padding(bottom = dimens.normalPadding),
                 onDetailsClick = navController::navigate,
                 tasks = viewModel.filterTasks(
-                    it,
+                    loadedTasks,
                     searchTextField.value.text,
                     taskFilterOption.value
-                )
+                ),
+                isLoading = isLoading,
+                onUpdate = viewModel::getAllTasks
             )
         }
 

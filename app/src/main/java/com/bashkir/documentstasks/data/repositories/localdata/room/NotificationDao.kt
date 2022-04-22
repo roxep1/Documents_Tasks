@@ -1,6 +1,7 @@
 package com.bashkir.documentstasks.data.repositories.localdata.room
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
@@ -17,4 +18,7 @@ interface NotificationDao {
 
     @Query("DELETE FROM notification WHERE id NOT IN (:ids)")
     suspend fun deleteAllNotIn(ids: List<String>)
+
+    @Delete
+    suspend fun deleteNotification(notification: Notification)
 }

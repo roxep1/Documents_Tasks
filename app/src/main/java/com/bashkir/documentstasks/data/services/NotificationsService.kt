@@ -12,6 +12,11 @@ import java.time.LocalDateTime
 open class NotificationsService : SharedService() {
     private val notificationDao: NotificationDao by KoinJavaComponent.inject(NotificationDao::class.java)
 
+    suspend fun deleteNotification(notification: Notification) =
+        notificationDao.deleteNotification(notification)
+
+    fun loadAllNotifications(): Flow<List<Notification>> = notificationDao.loadAll()
+
     protected suspend fun TaskDao.notificationsWithTasks(tasks: List<Task>) {
         notifyAboutDeleted(tasks)
         deleteNotUpToDate(tasks)
@@ -59,10 +64,14 @@ open class NotificationsService : SharedService() {
                 notificationDao
                     .insertAll(
                         *deletedTasks
-                            .map { it.toNotification("удалил задание \"${it.title}\"", LocalDateTime.now()) }
+                            .map {
+                                it.toNotification(
+                                    "удалил задание \"${it.title}\"",
+                                    LocalDateTime.now()
+                                )
+                            }
                             .toTypedArray()
                     )
             }
 
-    fun loadAllNotifications(): Flow<List<Notification>> = notificationDao.loadAll()
 }

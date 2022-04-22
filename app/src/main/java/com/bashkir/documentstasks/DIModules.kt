@@ -52,7 +52,7 @@ val viewModelModule = module {
     factory { params -> TasksViewModel(params.get(), get()) }
     factory { params -> NotificationsViewModel(params.get(), get()) }
     factory { params -> ProfileViewModel(params.get(), androidContext(), get()) }
-    factory { params -> DocumentsViewModel(params.get(), get())}
+    factory { params -> DocumentsViewModel(params.get(), get(), androidContext())}
 }
 
 val utilsModule = module {

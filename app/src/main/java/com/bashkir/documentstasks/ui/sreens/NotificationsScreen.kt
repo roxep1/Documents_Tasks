@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
-import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.cards.NotificationCardList
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.viewmodels.NotificationsViewModel
 
 @Composable
@@ -22,7 +22,11 @@ fun NotificationsScreenBody(navController: NavController, viewModel: Notificatio
         AsyncView(
             async = notifications,
             errorText = "Не удалось загрузить уведомления. Ошибка внутреннего хранилища"
-        ) {
-            NotificationCardList(it, navController = navController)
+        ) {loadedNotifications, _ ->
+            NotificationCardList(
+                loadedNotifications,
+                navController = navController,
+                onDelete = viewModel::deleteNotification
+            )
         }
     }

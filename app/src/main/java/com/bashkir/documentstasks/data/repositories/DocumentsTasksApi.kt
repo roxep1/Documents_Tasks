@@ -52,4 +52,7 @@ interface DocumentsTasksApi {
 
     @POST("document/perform/{id}")
     suspend fun addDocumentToPerform(@Path("id") performId: Int, @Body document: DocumentForm)
+
+    @PUT("document")
+    suspend fun updateDocument(@Body document: DocumentForm)
 }

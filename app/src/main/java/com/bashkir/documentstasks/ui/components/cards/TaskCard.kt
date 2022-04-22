@@ -1,8 +1,11 @@
 package com.bashkir.documentstasks.ui.components.cards
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.gestures.ScrollScope
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -12,6 +15,7 @@ import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
 import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
 import com.bashkir.documentstasks.ui.components.views.PerformersView
+import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.titleText
 import com.bashkir.documentstasks.utils.formatCutToString
 
@@ -19,10 +23,33 @@ import com.bashkir.documentstasks.utils.formatCutToString
 fun TaskCardList(
     modifier: Modifier = Modifier,
     tasks: Map<Task, TaskFilterOption> = mapOf(),
-    onDetailsClick: (Task) -> Unit
-) = LazyColumn(modifier = modifier.fillMaxSize()) {
-    items(tasks.toList()) { (task, isAuthor) ->
-        TaskCard(task = task, isAuthor) { onDetailsClick(task) }
+    onDetailsClick: (Task) -> Unit,
+    isLoading: Boolean,
+    onUpdate: () -> Unit
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        flingBehavior = object : FlingBehavior {
+            override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
+                onUpdate()
+                return initialVelocity
+            }
+        }
+    ) {
+        item {
+            if (isLoading)
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(dimens.normalPadding),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+        }
+        items(tasks.toList()) { (task, isAuthor) ->
+            TaskCard(task = task, isAuthor) { onDetailsClick(task) }
+        }
     }
 }
 

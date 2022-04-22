@@ -42,12 +42,12 @@ fun DocumentsScreenBody(navController: NavController, viewModel: DocumentsViewMo
                 Screen.AddDocument.destination
             )
         }) {
-        AsyncView(documents, "Не удалось загрузить документы") {
+        AsyncView(documents, "Не удалось загрузить документы") {loadedDocuments, _ ->
             DocumentCardList(
                 modifier = Modifier.padding(bottom = DocumentsTasksTheme.dimens.normalPadding),
                 onDetailsClick = navController::navigate,
                 documents = viewModel.filterDocuments(
-                    it,
+                    loadedDocuments,
                     searchTextField.value.text,
                     documentFilterOption.value
                 )

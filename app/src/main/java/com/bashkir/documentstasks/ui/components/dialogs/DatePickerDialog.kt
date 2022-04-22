@@ -4,18 +4,24 @@ import androidx.compose.runtime.Composable
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.title
 import java.time.LocalDate
 
 @Composable
-fun DatePickerDialog(dialogState: MaterialDialogState, onDateSet: (LocalDate) -> Unit) =
+fun DatePickerDialog(
+    dialogState: MaterialDialogState,
+    title: String? = null,
+    validator: (LocalDate) -> Boolean = { true },
+    onBackClick: () -> Unit = {},
+    onDateSet: (LocalDate) -> Unit
+) =
     MaterialDialog(
         dialogState = dialogState,
         buttons = {
             positiveButton("ОК")
-            negativeButton("Отмена")
+            negativeButton("Отмена", onClick = onBackClick)
         }
     ) {
-        datepicker {
-            onDateSet(it)
-        }
+        title(title)
+        datepicker(onDateChange = onDateSet, allowedDateValidator = validator)
     }

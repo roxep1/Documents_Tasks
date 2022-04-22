@@ -4,18 +4,24 @@ import androidx.compose.runtime.Composable
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.title
+import java.security.cert.CertPathValidator
 import java.time.LocalTime
 
 @Composable
-fun TimePickerDialog(dialogState: MaterialDialogState, onTimeSet: (LocalTime) -> Unit) =
+fun TimePickerDialog(
+    dialogState: MaterialDialogState,
+    title: String? = null,
+    onBackClick: () -> Unit = {},
+    onTimeSet: (LocalTime) -> Unit
+) =
     MaterialDialog(
         dialogState = dialogState,
         buttons = {
             positiveButton("OK")
-            negativeButton("Отмена")
+            negativeButton("Отмена", onClick = onBackClick)
         }
     ) {
-        timepicker {
-            onTimeSet(it)
-        }
+        title(title)
+        timepicker(onTimeChange = onTimeSet, is24HourClock = true)
     }

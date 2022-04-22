@@ -58,8 +58,6 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
                 onResult = viewModel::onSignInResult
             )
 
-
-
         if (userId is Loading)
             LoadingScreen()
         else {

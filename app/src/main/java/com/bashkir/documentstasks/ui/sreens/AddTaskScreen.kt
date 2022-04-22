@@ -1,6 +1,9 @@
 package com.bashkir.documentstasks.ui.sreens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -84,13 +87,13 @@ fun AddTaskScreenBody(navController: NavController, viewModel: TasksViewModel) =
 
         AddUserDialog(usersDialogState, taskPerformers, users)
 
-        UsersList(users = taskPerformers, deleteUserOnClick = taskPerformers::remove, label = "Исполнители") {
-            Row(Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                OutlinedButton(onClick = {
-                    usersDialogState.show()
-                }) {
-                    Text("Добавить исполнителя")
-                }
+        UsersList(
+            users = taskPerformers,
+            deleteUserOnClick = taskPerformers::remove,
+            label = "Исполнители"
+        ) {
+            OutlinedButton(onClick = usersDialogState::show) {
+                Text("Добавить исполнителя")
             }
         }
 
