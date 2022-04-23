@@ -62,7 +62,7 @@ fun TaskCard(task: Task, filterOption: TaskFilterOption, onDetailsClick: () -> U
         pubDate = task.pubDate,
         expandingButtonText = "${stringResource(R.string.performers)} ${task.performs.count()}",
         mainInfo = {
-            MainInfo {
+            MainInfo(Modifier.weight(0.5F)) {
                 Text(
                     "Сдать до: ${task.deadline.formatCutToString()}",
                     style = titleText,

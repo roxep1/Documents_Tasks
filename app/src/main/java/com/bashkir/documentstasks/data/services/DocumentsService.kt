@@ -31,5 +31,5 @@ class DocumentsService : NotificationsService() {
         api.agreed(agreement.id, AgreementStatus.Agreed)
 
     suspend fun addDocument(document: DocumentForm) =
-        api.addDocument(document)
+        api.addDocument(document.copy(author = UserForm(preferences.authorizedId)))
 }

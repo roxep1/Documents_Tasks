@@ -96,14 +96,21 @@ private fun RowScope.TitleAndDesc(title: String?, desc: String?, isExpanded: Boo
     verticalArrangement = Arrangement.SpaceBetween
 ) {
     title?.let {
-        Text(
-            title,
-            style = titleText
-        )
+        if (it.isNotBlank())
+            Text(
+                title,
+                style = titleText
+            )
     }
     desc?.let {
-        Spacer(modifier = Modifier.height(dimens.articlePadding))
-        Text(desc, maxLines = if (isExpanded) Int.MAX_VALUE else 2, fontSize = dimens.normalText)
+        if (it.isNotBlank()) {
+            Spacer(modifier = Modifier.height(dimens.articlePadding))
+            Text(
+                desc,
+                maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                fontSize = dimens.normalText
+            )
+        }
     }
 }
 
@@ -128,10 +135,9 @@ private fun ExpandingButton(text: String, isExpanded: Boolean) =
     }
 
 @Composable
-fun RowScope.MainInfo(content: @Composable ColumnScope.() -> Unit) = Column(
-    modifier = Modifier
-        .weight(0.5f)
-        .padding(start = dimens.normalPadding),
-    verticalArrangement = Arrangement.SpaceBetween,
-    content = content
-)
+fun MainInfo(modifier: Modifier = Modifier, content: @Composable (ColumnScope.() -> Unit)) =
+    Column(
+        modifier = modifier.padding(start = dimens.normalPadding),
+        verticalArrangement = Arrangement.Center,
+        content = content
+    )

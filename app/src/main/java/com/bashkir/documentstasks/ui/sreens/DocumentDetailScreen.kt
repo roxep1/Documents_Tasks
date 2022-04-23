@@ -108,9 +108,11 @@ private fun ColumnScope.DocumentView(document: Document, viewModel: DocumentsVie
     ) {
         Text("Обновить документ")
     }
-    Label("На согласование отправлено:")
-    document.agreement.AgreementsView()
-    Spacer(Modifier.height(dimens.normalPadding))
+    if(document.agreement.isNotEmpty()){
+        Label("На согласование отправлено:")
+        document.agreement.AgreementsView()
+        Spacer(Modifier.height(dimens.normalPadding))
+    }
     if (document.familiarize.isNotEmpty()) {
         Label("На ознакомление отправлено:")
         LazyColumn(Modifier.align(CenterHorizontally)) {

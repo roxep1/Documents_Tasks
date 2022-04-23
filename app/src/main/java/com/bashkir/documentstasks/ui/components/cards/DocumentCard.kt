@@ -6,11 +6,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import com.bashkir.documentstasks.data.models.Agreement
 import com.bashkir.documentstasks.data.models.Document
 import com.bashkir.documentstasks.data.models.Documentable
 import com.bashkir.documentstasks.data.models.Familiarize
 import com.bashkir.documentstasks.ui.components.views.AgreementsView
+import com.bashkir.documentstasks.utils.formatCutToString
 
 @Composable
 fun DocumentCardList(
@@ -25,27 +27,30 @@ fun DocumentCardList(
 
 @Composable
 fun DocumentCard(
-    document: Documentable,
+    documentable: Documentable,
     onDetailsClick: () -> Unit
 ) =
-    document.toDocument().let {
+    documentable.toDocument().let { document ->
         ExpandingCard(
-            title = it.title,
-            desc = it.desc,
-            author = it.author,
-            pubDate = it.created,
-            expandingButtonText = if (document is Agreement) "Согласования: " else "Подробнее",
+            title = document.title,
+            desc = document.desc,
+            author = document.author,
+            pubDate = document.created,
+            expandingButtonText = "Подробнее",
             mainInfo = {
-                MainInfo {
-                    if (document is Agreement)
-                        Text("Необходимо согласовать до ${document.deadline}")
-                    else if (document is Familiarize)
-                        Text("Ознакомиться")
+                MainInfo(Modifier.weight(if (document.desc == null || document.desc.isBlank()) 1F else 0.5f)) {
+                    if (documentable is Agreement)
+                        Text(
+                            "Cогласовать до: ${documentable.deadline.formatCutToString()}",
+                            fontWeight = FontWeight.Bold
+                        )
+                    else if (documentable is Familiarize)
+                        Text("Ознакомиться", fontWeight = FontWeight.Bold)
                 }
             },
             expandedInfo = {
-                if (document is Document)
-                    document.agreement.AgreementsView()
+                if (documentable is Document)
+                    documentable.agreement.AgreementsView()
             },
             onDetailsClick = onDetailsClick
         )
