@@ -29,6 +29,7 @@ fun UsersDialog(
     allUsers: Async<List<User>>,
     isValid: Boolean = true,
     onBackClick: () -> Unit = {},
+    onUpdate: () -> Unit,
     onAddClick: (List<String>) -> Unit
 ) {
     val selectedUserIds = remember { mutableStateListOf<String>() }
@@ -37,7 +38,7 @@ fun UsersDialog(
         negativeButton("Закрыть", onClick = onBackClick)
     }) {
         customView {
-            AsyncView(allUsers, "Не удалось загрузить пользователей") { users, _ ->
+            AsyncView(allUsers, "Не удалось загрузить пользователей", onUpdate = onUpdate) { users, _ ->
                 val searchTextField = remember { mutableStateOf(TextFieldValue()) }
                 Column {
                     SearchTextField(searchTextState = searchTextField)

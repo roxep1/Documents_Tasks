@@ -10,12 +10,15 @@ import com.vanpra.composematerialdialogs.MaterialDialogState
 fun AddUserDialog(
     dialogState: MaterialDialogState,
     addedPerformers: SnapshotStateList<User>,
-    allUsers: Async<List<User>>
+    allUsers: Async<List<User>>,
+    onUpdate: () -> Unit,
+    banList: List<String> = listOf()
 ) = UsersDialog(
     dialogState = dialogState,
-    addedUserIds = addedPerformers.map { it.id },
-    allUsers = allUsers
-) {ids ->
+    addedUserIds = addedPerformers.map { it.id } + banList,
+    allUsers = allUsers,
+    onUpdate = onUpdate
+) { ids ->
     addedPerformers.addAll(ids.map { id -> allUsers()!!.first { it.id == id } })
     dialogState.hide()
 }

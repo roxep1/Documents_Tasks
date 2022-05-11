@@ -9,28 +9,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.airbnb.mvrx.Fail
+import androidx.compose.ui.text.font.FontWeight
 import com.bashkir.documentstasks.ui.components.buttons.StyledTextButton
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 
 @Composable
-fun ErrorView(text: String, asyncFail: Fail<*>? = null, onUpdate: () -> Unit = {}) =
+fun NoElementsView(onUpdate: () -> Unit) =
     Box(Modifier.fillMaxSize()) {
         Column(
             Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()) {
             Text(
-                "$text\n${asyncFail?.error?.message ?: ""}",
-                color = Color.Red,
+                "В этом списке пока пусто :(",
                 fontSize = DocumentsTasksTheme.dimens.titleText,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(CenterHorizontally)
             )
             StyledTextButton(
                 text = "Обновить",
                 onClick = onUpdate,
-                modifier = Modifier.align(CenterHorizontally)
+                modifier = Modifier
+                    .align(CenterHorizontally)
             )
         }
     }

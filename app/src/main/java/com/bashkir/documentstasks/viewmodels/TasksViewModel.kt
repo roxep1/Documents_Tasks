@@ -1,38 +1,40 @@
 package com.bashkir.documentstasks.viewmodels
 
+import android.content.Context
+import android.net.Uri
 import com.airbnb.mvrx.*
-import com.bashkir.documentstasks.data.models.PerformStatus
-import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.data.models.TaskForm
-import com.bashkir.documentstasks.data.models.User
+import com.bashkir.documentstasks.data.models.*
 import com.bashkir.documentstasks.data.services.TasksService
-import com.bashkir.documentstasks.ui.components.filters.FilterOption
 import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
+import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption.*
 import com.bashkir.documentstasks.utils.filter
+import com.bashkir.documentstasks.utils.getAllFromUri
+import com.bashkir.documentstasks.utils.getExtension
+import com.bashkir.documentstasks.utils.writeDocument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
+import java.time.LocalDateTime
 
-class TasksViewModel(initialState: TasksState, private val service: TasksService) :
+class TasksViewModel(
+    initialState: TasksState,
+    private val service: TasksService,
+    private val context: Context
+) :
     MavericksViewModel<TasksState>(initialState) {
-    private var issuedTasks = listOf<Task>()
-
-    init {
-        onAsync(TasksState::tasks, onSuccess = {
-            issuedTasks = service.onlyIssuedTasks(it)
-        })
-    }
+    var myId = ""
 
     fun onCreate() {
         getAllTasks()
         getAllUsers()
+        myId = service.getMyId()
     }
 
     fun getAllTasks() = suspend {
         service.getAllTasks()
     }.execute(retainValue = TasksState::tasks) { copy(tasks = it) }
 
-    private fun getAllUsers() = suspend {
+    fun getAllUsers() = suspend {
         service.getAllUsers()
     }.execute { copy(users = it) }
 
@@ -40,18 +42,23 @@ class TasksViewModel(initialState: TasksState, private val service: TasksService
         tasks: List<Task>,
         searchText: String,
         filterOption: TaskFilterOption
-    ): Map<Task, TaskFilterOption> =
+    ): List<Task> =
         when (filterOption) {
-            TaskFilterOption.ALL -> tasks.associateWith { if(issuedTasks.contains(it)) TaskFilterOption.ISSUED else TaskFilterOption.MY }
-            TaskFilterOption.MY -> tasks.filter { !issuedTasks.contains(it) }
-                .associateWith { TaskFilterOption.MY }
-            TaskFilterOption.ISSUED -> issuedTasks.associateWith { TaskFilterOption.ISSUED }
-            else -> tasks.associateWith { TaskFilterOption.COMPLETED }
+            ALL -> tasks
+            MY -> tasks.filter { it.author.id != myId }
+            ISSUED -> tasks.getIssued()
+            COMPLETED -> tasks.getIssued()
+                .filter { task -> task.performs.all { it.status == PerformStatus.Completed } }
+            FAILED -> tasks.getIssued()
+                .filter { task ->
+                    task.deadline.isBefore(LocalDateTime.now()) &&
+                            task.performs.any { it.status != PerformStatus.Completed }
+                }
         }.filter(searchText)
 
-    fun isIssuedTask(task: Task): Boolean = issuedTasks.contains(task)
+    private fun List<Task>.getIssued(): List<Task> = filter { it.author.id == myId }
 
-    fun getPerformStatus(task: Task): PerformStatus = service.getMyPerform(task).status
+    fun getMyPerform(task: Task): Perform = service.getMyPerform(task)
 
     fun addCommentToTask(task: Task, comment: String) = suspend {
         service.addCommentToTask(task, comment)
@@ -73,8 +80,21 @@ class TasksViewModel(initialState: TasksState, private val service: TasksService
         service.deleteTask(task)
     }.executeWithTaskUpdate()
 
+    fun addDocumentToTask(task: Task, uri: Uri?) = uri?.let {
+        getAllFromUri(uri, context) { name, _, bytes ->
+            suspend {
+                service.addDocumentToTask(
+                    task,
+                    DocumentForm(name!!, bytes!!, name.getExtension(), null, listOf(), listOf())
+                )
+            }.executeWithTaskUpdate()
+        }
+    }
+
+    fun downloadDocument(document: Document, uri: Uri?) = writeDocument(document, uri, context)
+
     private fun (suspend () -> Unit).executeWithTaskUpdate() = execute {
-        if(it is Success) getAllTasks()
+        if (it is Success) getAllTasks()
         copy()
     }
 

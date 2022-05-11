@@ -6,11 +6,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import com.bashkir.documentstasks.data.models.Agreement
 import com.bashkir.documentstasks.data.models.Document
 import com.bashkir.documentstasks.data.models.Documentable
 import com.bashkir.documentstasks.data.models.Familiarize
+import com.bashkir.documentstasks.ui.components.HandleFlingBehavior
+import com.bashkir.documentstasks.ui.components.loadingItem
 import com.bashkir.documentstasks.ui.components.views.AgreementsView
 import com.bashkir.documentstasks.utils.formatCutToString
 
@@ -18,8 +21,11 @@ import com.bashkir.documentstasks.utils.formatCutToString
 fun DocumentCardList(
     modifier: Modifier = Modifier,
     documents: List<Documentable>,
-    onDetailsClick: (Document) -> Unit
-) = LazyColumn(modifier = modifier.fillMaxSize()) {
+    isLoading: Boolean,
+    onDetailsClick: (Document) -> Unit,
+    onUpdate: () -> Unit
+) = LazyColumn(modifier = modifier.fillMaxSize(), flingBehavior = HandleFlingBehavior(onUpdate)) {
+    loadingItem(isLoading)
     items(documents.toList()) { document ->
         DocumentCard(document) { onDetailsClick(document.toDocument()) }
     }
@@ -34,7 +40,7 @@ fun DocumentCard(
         ExpandingCard(
             title = document.title,
             desc = document.desc,
-            author = document.author,
+            author = document.author.shortFullName,
             pubDate = document.created,
             expandingButtonText = "Подробнее",
             mainInfo = {
@@ -45,7 +51,11 @@ fun DocumentCard(
                             fontWeight = FontWeight.Bold
                         )
                     else if (documentable is Familiarize)
-                        Text("Ознакомиться", fontWeight = FontWeight.Bold)
+                        Text(
+                            if (!documentable.checked) "Ознакомиться" else "Вы уже ознакомлены",
+                            fontWeight = FontWeight.Bold,
+                            color = if (!documentable.checked) Color.Red else Color.Green
+                        )
                 }
             },
             expandedInfo = {

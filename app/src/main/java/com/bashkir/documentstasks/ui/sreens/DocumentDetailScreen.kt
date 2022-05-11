@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.contracts.DocumentCreateContract
+import com.bashkir.documentstasks.contracts.DocumentSelectContract
 import com.bashkir.documentstasks.data.models.*
 import com.bashkir.documentstasks.ui.components.Label
 import com.bashkir.documentstasks.ui.components.buttons.StyledTextButton
@@ -39,12 +40,14 @@ fun DocumentDetailScreenBody(
     ) {
         AsyncView(
             async = documents,
-            errorText = "Неудалось загрузить документы"
+            errorText = "Неудалось загрузить документы",
+            onUpdate = viewModel::getAllDocuments
         ) { loadedDocuments, _ ->
-            loadedDocuments.find { document -> document.toDocument().id == documentId }?.let { document ->
-                title = document.toDocument().title
-                DocumentDetailView(document, viewModel)
-            }
+            loadedDocuments.find { document -> document.toDocument().id == documentId }
+                ?.let { document ->
+                    title = document.toDocument().title
+                    DocumentDetailView(document, viewModel)
+                }
         }
     }
 }
@@ -56,6 +59,7 @@ private fun DocumentDetailView(document: Documentable, viewModel: DocumentsViewM
             .padding(dimens.normalPadding)
             .fillMaxSize()
     ) {
+
         document.toDocument().run {
             desc?.let {
                 if (desc.isNotBlank()) {
@@ -75,10 +79,13 @@ private fun DocumentDetailView(document: Documentable, viewModel: DocumentsViewM
                 contract = DocumentCreateContract(),
                 onResult = { viewModel.downloadDocument(document.toDocument(), it) }
             )
+
         StyledTextButton(
             Modifier.align(CenterHorizontally),
             "Скачать документ",
-            onClick = { downloadDocLauncher.launch(document.toDocument()) }
+            onClick = {
+                downloadDocLauncher.launch(document.toDocument())
+            }
         )
 
         when (document) {
@@ -102,13 +109,19 @@ private fun ColumnScope.FamiliarizeView(familiarize: Familiarize, viewModel: Doc
 
 @Composable
 private fun ColumnScope.DocumentView(document: Document, viewModel: DocumentsViewModel) {
+    val updateDocLauncher =
+        rememberLauncherForActivityResult(
+            contract = DocumentSelectContract(),
+            onResult = { viewModel.updateDocument(document, it) }
+        )
+
     OutlinedButton(
-        onClick = { /*viewModel::updateDocument*/ },
+        onClick = { updateDocLauncher.launch(0) },
         Modifier.align(CenterHorizontally)
     ) {
         Text("Обновить документ")
     }
-    if(document.agreement.isNotEmpty()){
+    if (document.agreement.isNotEmpty()) {
         Label("На согласование отправлено:")
         document.agreement.AgreementsView()
         Spacer(Modifier.height(dimens.normalPadding))

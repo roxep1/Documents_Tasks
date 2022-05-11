@@ -10,7 +10,7 @@ import java.time.LocalDate
 @Composable
 fun DatePickerDialog(
     dialogState: MaterialDialogState,
-    title: String? = null,
+    title: String = "",
     validator: (LocalDate) -> Boolean = { true },
     onBackClick: () -> Unit = {},
     onDateSet: (LocalDate) -> Unit

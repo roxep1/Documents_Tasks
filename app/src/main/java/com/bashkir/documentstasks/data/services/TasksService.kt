@@ -5,7 +5,7 @@ import com.bashkir.documentstasks.data.repositories.localdata.room.TaskDao
 import com.bashkir.documentstasks.utils.getAllPerforms
 import org.koin.java.KoinJavaComponent.inject
 
-class TasksService : NotificationsService() {
+class TasksService : TasksNotificationService() {
     private val taskDao: TaskDao by inject(TaskDao::class.java)
 
     suspend fun getAllTasks(): List<Task> =
@@ -57,4 +57,6 @@ class TasksService : NotificationsService() {
     }
 
     suspend fun deleteTask(task: Task) = api.deleteTask(task.id)
+
+    fun getMyId(): String = preferences.authorizedId
 }

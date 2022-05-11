@@ -2,18 +2,16 @@ package com.bashkir.documentstasks.viewmodels
 
 import android.content.Context
 import android.net.Uri
-import android.provider.OpenableColumns
+import androidx.navigation.NavController
 import com.airbnb.mvrx.*
 import com.bashkir.documentstasks.data.models.*
 import com.bashkir.documentstasks.data.services.DocumentsService
 import com.bashkir.documentstasks.ui.components.filters.DocumentFilterOption
 import com.bashkir.documentstasks.ui.components.filters.DocumentFilterOption.*
-import com.bashkir.documentstasks.utils.filter
+import com.bashkir.documentstasks.utils.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 class DocumentsViewModel(
     initialState: DocumentsState,
@@ -26,9 +24,9 @@ class DocumentsViewModel(
         getAllUsers()
     }
 
-    private fun getAllDocuments() = suspend {
+    fun getAllDocuments() = suspend {
         service.getAllDocuments()
-    }.execute { copy(documents = it) }
+    }.execute(retainValue = DocumentsState::documents) { copy(documents = it) }
 
     fun filterDocuments(
         documents: List<Documentable>,
@@ -42,20 +40,14 @@ class DocumentsViewModel(
             ISSUED -> documents.filterIsInstance<Document>()
         }.filter(searchText)
 
-    fun downloadDocument(document: Document, uri: Uri?) =
-        uri?.let {
-            context.contentResolver.openFileDescriptor(uri, "w")?.use {
-                FileOutputStream(it.fileDescriptor).use { stream ->
-                    stream.write(document.file)
-                }
-            }
-        }
+    fun downloadDocument(document: Document, uri: Uri?) = writeDocument(document, uri, context)
 
     fun addDocument(document: DocumentForm) = suspend {
         service.addDocument(document)
     }.execute {
-        getAllDocuments()
-        copy()
+        if (it is Success)
+            getAllDocuments()
+        copy(addingDocumentState = it)
     }
 
     fun agreedDocument(agreement: Agreement) = suspend {
@@ -86,12 +78,31 @@ class DocumentsViewModel(
         copy()
     }
 
-    fun updateDocument(document: DocumentForm) = suspend {
-        service.updateDocument(document)
-    }.execute {
-        getAllDocuments()
-        copy()
-    }
+    fun updateDocument(document: Document, newFileUri: Uri?) =
+        getBytesDocument(newFileUri, context)?.let { bytes ->
+            getMetadata(newFileUri, context) { fileName, _ ->
+                suspend {
+                    service.updateDocument(document.run {
+                        DocumentForm(
+                            title,
+                            bytes,
+                            fileName?.getExtension() ?: extension,
+                            desc,
+                            listOf(),
+                            listOf(),
+                            author.toForm(),
+                            templateId,
+                            id
+                        )
+                    })
+                }.execute {
+                    if (it is Success)
+                        getAllDocuments()
+
+                    copy()
+                }
+            }
+        }
 
     fun familiarizeDocument(familiarize: Familiarize) = suspend {
         service.familiarizeDocument(familiarize)
@@ -100,33 +111,18 @@ class DocumentsViewModel(
         copy()
     }
 
-    fun getBytesDocument(uri: Uri?): ByteArray? =
-        uri?.let {
-            context.contentResolver.openFileDescriptor(uri, "r").use {
-                FileInputStream(it?.fileDescriptor).use { stream ->
-                    stream.readBytes()
-                }
-            }
-        }
+    fun endAddingSession(navController: NavController) {
+        setState { copy(addingDocumentState = Uninitialized) }
+        navController.popBackStack()
+    }
 
-    fun getMetadata(uri: Uri?, onResult: (String?, Long?) -> Unit) =
-        uri?.let {
-            context.contentResolver.query(
-                uri, null, null, null, null, null
-            )?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    val displayName = if (index >= 0) cursor.getString(index) else null
-                    val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-                    val size = if (sizeIndex >= 0) cursor.getLong(sizeIndex) else null
-                    onResult(displayName, size)
-                }
-            }
-        }
-
-    private fun getAllUsers() = suspend {
+    fun getAllUsers() = suspend {
         service.getAllUsers()
     }.execute { copy(users = it) }
+
+    fun getBytesDocument(uri: Uri?): ByteArray? = getBytesDocument(uri, context)
+    fun getMetadata(uri: Uri?, onResult: (String?, Long?) -> Unit) =
+        getMetadata(uri, context, onResult)
 
     companion object : MavericksViewModelFactory<DocumentsViewModel, DocumentsState>,
         KoinComponent {
@@ -139,5 +135,6 @@ class DocumentsViewModel(
 
 data class DocumentsState(
     val documents: Async<List<Documentable>> = Uninitialized,
-    val users: Async<List<User>> = Uninitialized
+    val users: Async<List<User>> = Uninitialized,
+    val addingDocumentState: Async<Unit> = Uninitialized,
 ) : MavericksState

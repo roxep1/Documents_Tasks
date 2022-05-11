@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
-import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.buttons.AddFloatingButton
@@ -47,8 +46,11 @@ fun TasksScreenBody(
             )
         })
     {
-
-        AsyncView(tasks, "Не удалось загрузить задачи") {loadedTasks, isLoading ->
+        AsyncView(
+            tasks,
+            "Не удалось загрузить задачи",
+            onUpdate = viewModel::getAllTasks
+        ) { loadedTasks, isLoading ->
             TaskCardList(
                 modifier = Modifier.padding(bottom = dimens.normalPadding),
                 onDetailsClick = navController::navigate,
@@ -58,7 +60,8 @@ fun TasksScreenBody(
                     taskFilterOption.value
                 ),
                 isLoading = isLoading,
-                onUpdate = viewModel::getAllTasks
+                onUpdate = viewModel::getAllTasks,
+                myId = viewModel.myId
             )
         }
 

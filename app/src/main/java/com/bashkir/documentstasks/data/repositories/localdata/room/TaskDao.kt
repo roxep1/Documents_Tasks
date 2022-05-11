@@ -4,7 +4,7 @@ import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
 import com.bashkir.documentstasks.data.models.PerformEntity
 import com.bashkir.documentstasks.data.models.TaskEntity
-import com.bashkir.documentstasks.data.models.TaskWithPerforms
+import com.bashkir.documentstasks.data.models.FullLocalTask
 
 @Dao
 interface TaskDao {
@@ -13,18 +13,15 @@ interface TaskDao {
 
     @Transaction
     @Query("SELECT * FROM task")
-    suspend fun getAllLocalTasks(): List<TaskWithPerforms>
-
-    @Query("SELECT * FROM perform")
-    suspend fun getAllPerforms(): List<PerformEntity>
+    suspend fun getAllLocalTasks(): List<FullLocalTask>
 
     @Transaction
     @Query("SELECT * FROM task WHERE userId = :userId")
-    suspend fun getIssuedTasks(userId: String): List<TaskWithPerforms>
+    suspend fun getIssuedTasks(userId: String): List<FullLocalTask>
 
     @Transaction
     @Query("SELECT * FROM task WHERE userId != :userId")
-    suspend fun getToDoTasks(userId: String): List<TaskWithPerforms>
+    suspend fun getToDoTasks(userId: String): List<FullLocalTask>
 
     @Query("DELETE FROM task WHERE taskId NOT IN (:tasksId) ")
     suspend fun deleteAllNotIn(tasksId: List<Int>)

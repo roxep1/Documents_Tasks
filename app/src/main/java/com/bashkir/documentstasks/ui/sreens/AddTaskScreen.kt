@@ -85,7 +85,7 @@ fun AddTaskScreenBody(navController: NavController, viewModel: TasksViewModel) =
             taskDeadLine = taskDeadLine.plus(it)
         }
 
-        AddUserDialog(usersDialogState, taskPerformers, users)
+        AddUserDialog(usersDialogState, taskPerformers, users, viewModel::getAllUsers)
 
         UsersList(
             users = taskPerformers,

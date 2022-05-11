@@ -11,7 +11,7 @@ class DocumentCreateContract : ActivityResultContract<Document, Uri?>() {
     override fun createIntent(context: Context, input: Document): Intent =
         Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            type = input.getFileType()
             putExtra(Intent.EXTRA_TITLE, input.title)
         }
 

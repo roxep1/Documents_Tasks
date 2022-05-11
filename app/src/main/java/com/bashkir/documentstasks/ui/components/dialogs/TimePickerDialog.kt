@@ -11,7 +11,7 @@ import java.time.LocalTime
 @Composable
 fun TimePickerDialog(
     dialogState: MaterialDialogState,
-    title: String? = null,
+    title: String = "",
     onBackClick: () -> Unit = {},
     onTimeSet: (LocalTime) -> Unit
 ) =

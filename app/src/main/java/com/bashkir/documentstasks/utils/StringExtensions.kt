@@ -9,3 +9,5 @@ fun Long.toMB(): String = "${div(1000000)},${
         }
     }
 } Мб"
+
+fun String.getExtension(): String = substring(lastIndexOf(".") + 1)

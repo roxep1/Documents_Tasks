@@ -11,13 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
-import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.anim.AnimateVertical
 import com.bashkir.documentstasks.ui.components.buttons.AddFloatingButton
 import com.bashkir.documentstasks.ui.components.cards.DocumentCardList
 import com.bashkir.documentstasks.ui.components.cards.FilterSettingsCard
 import com.bashkir.documentstasks.ui.components.filters.DocumentFilterOption
 import com.bashkir.documentstasks.ui.components.topbars.ExtendedTopBarBottomNav
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.navigation.Screen
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 import com.bashkir.documentstasks.utils.navigate
@@ -42,7 +42,11 @@ fun DocumentsScreenBody(navController: NavController, viewModel: DocumentsViewMo
                 Screen.AddDocument.destination
             )
         }) {
-        AsyncView(documents, "Не удалось загрузить документы") {loadedDocuments, _ ->
+        AsyncView(
+            documents,
+            "Не удалось загрузить документы",
+            onUpdate = viewModel::getAllDocuments
+        ) { loadedDocuments, isLoading ->
             DocumentCardList(
                 modifier = Modifier.padding(bottom = DocumentsTasksTheme.dimens.normalPadding),
                 onDetailsClick = navController::navigate,
@@ -50,7 +54,9 @@ fun DocumentsScreenBody(navController: NavController, viewModel: DocumentsViewMo
                     loadedDocuments,
                     searchTextField.value.text,
                     documentFilterOption.value
-                )
+                ),
+                isLoading = isLoading,
+                onUpdate = viewModel::getAllDocuments
             )
         }
 

@@ -1,5 +1,6 @@
 package com.bashkir.documentstasks.ui.sreens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,12 +15,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.R
+import com.bashkir.documentstasks.contracts.DocumentSelectContract
 import com.bashkir.documentstasks.data.models.PerformStatus.*
 import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.ui.components.views.AsyncView
+import com.bashkir.documentstasks.ui.components.cards.FilesList
 import com.bashkir.documentstasks.ui.components.dialogs.AddCommentDialog
 import com.bashkir.documentstasks.ui.components.dialogs.CompleteTaskDialog
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
+import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.views.PerformersView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.titleText
@@ -39,10 +42,10 @@ fun TaskDetailScreenBody(taskId: Int, navController: NavController, viewModel: T
     Scaffold(
         topBar = { TopBar(titleText = title, navController = navController) }
     ) {
-        AsyncView(tasks, "Не удалось загрузить задачи") { loadedTasks, _ ->
+        AsyncView(tasks, "Не удалось загрузить задачи", viewModel::getAllTasks) { loadedTasks, _ ->
             loadedTasks.find { task -> task.id == taskId }?.let { task ->
                 title = task.title
-                TaskDetailView(task = task, viewModel, viewModel.isIssuedTask(task), navController)
+                TaskDetailView(task = task, viewModel, navController)
             }
         }
     }
@@ -52,7 +55,6 @@ fun TaskDetailScreenBody(taskId: Int, navController: NavController, viewModel: T
 private fun TaskDetailView(
     task: Task,
     viewModel: TasksViewModel,
-    isIssuedTask: Boolean,
     navController: NavController
 ) =
     Column(
@@ -70,7 +72,7 @@ private fun TaskDetailView(
             fontSize = dimens.titleText
         )
 
-        if (isIssuedTask)
+        if (task.author.id == viewModel.myId)
             IssuedTaskView(task, viewModel, navController)
         else
             MyTaskView(task, viewModel)
@@ -78,9 +80,9 @@ private fun TaskDetailView(
 
 @Composable
 private fun ColumnScope.MyTaskView(task: Task, viewModel: TasksViewModel) {
-    viewModel.getPerformStatus(task).let { status ->
+    viewModel.getMyPerform(task).let { perform ->
 
-        if (status != Completed) {
+        if (perform.status != Completed) {
             val openDialog = remember { mutableStateOf(false) }
 
             OutlinedButton(
@@ -88,10 +90,10 @@ private fun ColumnScope.MyTaskView(task: Task, viewModel: TasksViewModel) {
                     .padding(top = dimens.normalPadding)
                     .align(CenterHorizontally),
                 onClick = {
-                    if (status == InProgress) openDialog.value = true
+                    if (perform.status == InProgress) openDialog.value = true
                     else viewModel.inProgressTask(task)
                 }) {
-                Text(if (status == InProgress) "Сдать задачу" else "Приступить")
+                Text(if (perform.status == InProgress) "Сдать задачу" else "Приступить")
             }
 
             CompleteTaskDialog(
@@ -100,10 +102,23 @@ private fun ColumnScope.MyTaskView(task: Task, viewModel: TasksViewModel) {
                 onCompleteClick = viewModel::completeTask
             )
         }
-        if (status != Waiting) {
-            val dialogState = rememberMaterialDialogState()
 
-            TaskDetailButton("Прикрепить файл к задаче") {}
+        if (perform.documents.isNotEmpty())
+            FilesList(documents = perform.documents) { uri, document ->
+                viewModel.downloadDocument(
+                    document,
+                    uri
+                )
+            }
+
+        if (perform.status != Waiting) {
+            val dialogState = rememberMaterialDialogState()
+            val selectDocLauncher = rememberLauncherForActivityResult(
+                contract = DocumentSelectContract(),
+                onResult = { viewModel.addDocumentToTask(task, it) }
+            )
+
+            TaskDetailButton("Прикрепить файл к задаче") { selectDocLauncher.launch(0) }
             TaskDetailButton("Оставить комментарий к выполнению", onClick = dialogState::show)
 
             AddCommentDialog(dialogState) { comment ->
@@ -123,7 +138,12 @@ private fun ColumnScope.IssuedTaskView(
 
     Text(stringResource(R.string.performers), style = titleText)
     Spacer(modifier = Modifier.height(dimens.articlePadding))
-    task.performs.PerformersView(extended = true)
+    task.performs.PerformersView(extended = true) { uri, document ->
+        viewModel.downloadDocument(
+            document,
+            uri
+        )
+    }
     TaskDetailButton(text = "Удалить задачу", onClick = dialogState::show)
 
     MaterialDialog(dialogState, buttons = {

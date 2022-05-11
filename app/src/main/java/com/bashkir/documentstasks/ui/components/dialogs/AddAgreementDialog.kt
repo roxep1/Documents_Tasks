@@ -15,17 +15,20 @@ import java.time.LocalDateTime
 fun AddAgreementDialog(
     dialogState: MaterialDialogState,
     addedAgreements: SnapshotStateList<AgreementForm>,
-    allUsers: Async<List<User>>
+    allUsers: Async<List<User>>,
+    onUpdate: () -> Unit,
+    banList: List<String> = listOf()
 ) {
-    var deadline by remember { mutableStateOf(LocalDateTime.now()) }
+    var deadline by remember { mutableStateOf(LocalDateTime.now().plusDays(1)) }
     val usersState = rememberMaterialDialogState()
     val timePickerState = rememberMaterialDialogState()
 
     UsersDialog(
         dialogState = usersState,
-        addedUserIds = addedAgreements.map { it.user.id },
+        addedUserIds = addedAgreements.map { it.user.id } + banList,
         allUsers = allUsers,
-        onBackClick = timePickerState::show
+        onBackClick = timePickerState::show,
+        onUpdate = onUpdate
     ) { userIds ->
         userIds.forEach { id ->
             addedAgreements.add(

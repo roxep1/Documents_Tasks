@@ -16,9 +16,6 @@ fun List<Task>.filter(searchText: String): List<Task> = filter { task ->
 
 fun Set<Task>.filter(searchText: String): List<Task> = this.toList().filter(searchText)
 
-fun Map<Task, TaskFilterOption>.filter(searchText: String): Map<Task, TaskFilterOption> =
-    keys.filter(searchText).associateWith { this[it]!! }
-
 @JvmName("filterUser")
 fun List<User>.filter(searchText: String): List<User> = filter { user ->
     searchText.lowercase().let {

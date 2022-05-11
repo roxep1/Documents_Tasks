@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 fun ExpandingCard(
     title: String? = null,
     desc: String? = null,
-    author: User,
+    author: String,
     pubDate: LocalDateTime,
     expandingButtonText: String = "",
     mainInfo: @Composable RowScope.(Boolean) -> Unit = {},
@@ -115,10 +115,10 @@ private fun RowScope.TitleAndDesc(title: String?, desc: String?, isExpanded: Boo
 }
 
 @Composable
-private fun DownInfo(pubDate: LocalDateTime, author: User) = Row(modifier = Modifier) {
+private fun DownInfo(pubDate: LocalDateTime, author: String) = Row(modifier = Modifier) {
     Text(pubDate.formatCutToString(), style = graySmallText)
     Spacer(modifier = Modifier.width(dimens.normalPadding))
-    Text("Автор: ${author.shortFullName}", style = graySmallText)
+    Text("Автор: $author", style = graySmallText)
 }
 
 @Composable

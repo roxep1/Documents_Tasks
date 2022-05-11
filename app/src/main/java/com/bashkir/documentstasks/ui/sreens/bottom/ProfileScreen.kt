@@ -33,8 +33,7 @@ fun ProfileScreenBody(navController: NavController, viewModel: ProfileViewModel)
             .fillMaxSize()
             .padding(dimens.normalPadding)
     ) {
-        //TODO
-        AsyncView(user, errorText = "Не удалось загрузить авторизованного пользователя") {loadedUser, _ ->
+        AsyncView(user, errorText = "Не удалось загрузить авторизованного пользователя", {}) {loadedUser, _ ->
             Box(
                 Modifier
                     .fillMaxSize()

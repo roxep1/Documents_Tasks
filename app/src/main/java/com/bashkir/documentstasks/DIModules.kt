@@ -2,6 +2,8 @@ package com.bashkir.documentstasks
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
 import androidx.room.Room
 import com.bashkir.documentstasks.data.repositories.DocumentsTasksApi
 import com.bashkir.documentstasks.data.repositories.localdata.preferences.LocalUserPreferences
@@ -15,7 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-private const val BASE_URL = "https://documents-tasks-api.herokuapp.com/"
+private const val BASE_URL = "https://api.ok654.org/"
 
 val repositoriesModule = module {
     single { LocalUserPreferences(androidContext()) }
@@ -37,6 +39,7 @@ val localBaseDAOsModule = module {
     single { get<AppDatabase>().userDao() }
     single { get<AppDatabase>().taskDao() }
     single { get<AppDatabase>().notificationDao() }
+    single { get<AppDatabase>().documentDao() }
 }
 
 val servicesModule = module {
@@ -49,17 +52,19 @@ val servicesModule = module {
 
 val viewModelModule = module {
     factory { params -> AuthViewModel(params.get(), androidContext(), get()) }
-    factory { params -> TasksViewModel(params.get(), get()) }
+    factory { params -> TasksViewModel(params.get(), get(), androidContext()) }
     factory { params -> NotificationsViewModel(params.get(), get()) }
     factory { params -> ProfileViewModel(params.get(), androidContext(), get()) }
-    factory { params -> DocumentsViewModel(params.get(), get(), androidContext())}
+    factory { params -> DocumentsViewModel(params.get(), get(), androidContext()) }
 }
 
 val utilsModule = module {
     factory(named("isOnline")) {
-        val cm =
-            androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        cm.activeNetwork != null
+        (androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).run {
+            getNetworkCapabilities(activeNetwork)?.let{
+                it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+            } ?:false
+        }
     }
 }
 

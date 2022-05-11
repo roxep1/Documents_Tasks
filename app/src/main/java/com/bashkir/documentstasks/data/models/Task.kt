@@ -10,11 +10,11 @@ import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 
-
 data class Task(
     val id: Int,
     val title: String,
     val desc: String,
+
     @JsonAdapter(LocalDateTimeJsonAdapter::class)
     val deadline: LocalDateTime,
     val author: User,
@@ -60,7 +60,7 @@ data class TaskEntity(
     val pubDate: LocalDateTime
 )
 
-data class TaskWithPerforms(
+data class FullLocalTask(
     @Embedded val task: TaskEntity,
     @Relation(
         parentColumn = "taskId",
@@ -78,5 +78,4 @@ data class TaskWithPerforms(
             pubDate,
             performs.map { it.toPerform() })
     }
-
 }

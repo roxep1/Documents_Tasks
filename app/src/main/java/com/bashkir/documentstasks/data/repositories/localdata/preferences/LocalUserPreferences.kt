@@ -1,18 +1,20 @@
 package com.bashkir.documentstasks.data.repositories.localdata.preferences
 
 import android.content.Context
+import android.net.Uri
 import androidx.core.content.edit
 
 class LocalUserPreferences(context: Context) {
     companion object {
-        private const val path = "localUsers"
+        private const val localUserPath = "localUsers"
     }
 
-    private val sharedPref = context.getSharedPreferences(path, Context.MODE_PRIVATE)
-    val authorizedId
-        get() = sharedPref.all.filter { it.value as Boolean }.keys.first()
+    private val localUsers = context.getSharedPreferences(localUserPath, Context.MODE_PRIVATE)
 
-    fun authorizeUser(id: String) = sharedPref.edit {
+    val authorizedId: String
+        get() = localUsers.all.filter { it.value as Boolean }.keys.first()
+
+    fun authorizeUser(id: String) = localUsers.edit {
         getAllUsersId().forEach {
             putBoolean(it, false)
         }
@@ -21,14 +23,14 @@ class LocalUserPreferences(context: Context) {
         commit()
     }
 
-    fun logoutUser() = sharedPref.edit {
+    fun logoutUser() = localUsers.edit {
         putBoolean(authorizedId, false)
         commit()
     }
 
-    private fun getAllUsersId(): List<String> = sharedPref.all.keys.map { it }
+    private fun getAllUsersId(): List<String> = localUsers.all.keys.map { it }
 
-    fun getAuthorizedIdIfExist(): String? = sharedPref.all.filter { it.value as Boolean }.keys.run {
+    fun getAuthorizedIdIfExist(): String? = localUsers.all.filter { it.value as Boolean }.keys.run {
         if (isNotEmpty())
             first()
         else null

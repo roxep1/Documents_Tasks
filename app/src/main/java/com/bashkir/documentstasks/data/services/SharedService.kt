@@ -22,7 +22,7 @@ open class SharedService {
         return api.getUsers().filter { it.id != id }
     }
 
-    private fun <T> withAuthorizedId(action: (id: String) -> T): T =
+    private inline fun <T> withAuthorizedId(action: (id: String) -> T): T =
         action(preferences.authorizedId)
 
     private fun getMyPerforms(vararg tasks: Task): List<Perform> =

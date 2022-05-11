@@ -80,7 +80,7 @@ dependencies {
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.6.3"
 
     //Sign in with Google
-    implementation "com.google.android.gms:play-services-auth:20.1.0"
+    implementation "com.google.android.gms:play-services-auth:20.2.0"
 
     //Mavericks
     implementation 'com.airbnb.android:mavericks:2.6.0'

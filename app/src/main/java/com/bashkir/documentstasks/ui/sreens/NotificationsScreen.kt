@@ -21,7 +21,8 @@ fun NotificationsScreenBody(navController: NavController, viewModel: Notificatio
         val notifications by viewModel.collectAsState { it.notifications }
         AsyncView(
             async = notifications,
-            errorText = "Не удалось загрузить уведомления. Ошибка внутреннего хранилища"
+            errorText = "Не удалось загрузить уведомления. Ошибка внутреннего хранилища",
+            onUpdate = {}
         ) {loadedNotifications, _ ->
             NotificationCardList(
                 loadedNotifications,
