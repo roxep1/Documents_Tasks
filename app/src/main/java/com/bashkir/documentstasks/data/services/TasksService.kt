@@ -10,7 +10,7 @@ class TasksService : TasksNotificationService() {
 
     suspend fun getAllTasks(): List<Task> =
         if (isOnline)
-            api.getAllTasks(preferences.authorizedId).let { tasks ->
+            api.getAllTasks().let { tasks ->
                 doLocalWork(tasks)
                 tasks
             }

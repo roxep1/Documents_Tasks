@@ -14,11 +14,12 @@ class GoogleApiContract : ActivityResultContract<Int, Task<GoogleSignInAccount>?
 
     override fun createIntent(context: Context, input: Int): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.server_client_id))
             .requestEmail()
             .build()
 
-        val intent = GoogleSignIn.getClient(context, gso)
-        return intent.signInIntent
+        val client = GoogleSignIn.getClient(context, gso)
+        return client.signInIntent
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): Task<GoogleSignInAccount>? =

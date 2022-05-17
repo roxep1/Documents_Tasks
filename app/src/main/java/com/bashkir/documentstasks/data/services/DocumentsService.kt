@@ -9,11 +9,11 @@ class DocumentsService : NotificationsService() {
 
     suspend fun getAllDocuments(): List<Documentable> =
         if (isOnline)
-            api.getCreatedDocuments(preferences.authorizedId).run {
+            api.getCreatedDocuments().run {
                 plus(
-                    api.getAllAgreements(preferences.authorizedId)
+                    api.getAllAgreements()
                 ).plus(
-                    api.getAllFamiliarizes(preferences.authorizedId)
+                    api.getAllFamiliarizes()
                 )
             }.also { doLocalWork(it) }
         else documentDao.getAllLocalDocuments().map(FullLocalDocument::toDocument).run {

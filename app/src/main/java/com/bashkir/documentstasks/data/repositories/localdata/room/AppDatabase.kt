@@ -13,9 +13,9 @@ import com.bashkir.documentstasks.data.models.*
         AgreementEntity::class,
         FamiliarizeEntity::class,
         Notification::class],
-    version = 7,
+    version = 6,
     autoMigrations = [
-        AutoMigration(from = 6, to = 7, spec = AppDatabase.DocumentsTasksAutoMigration::class)
+        AutoMigration(from = 5, to = 6, spec = AppDatabase.DocumentsTasksAutoMigration::class)
     ]
 )
 @TypeConverters(Converters::class)

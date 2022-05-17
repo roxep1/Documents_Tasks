@@ -21,11 +21,7 @@ fun LocalTime.formatToString(): String =
     "${withZero(hour)}:${withZero(minute)}"
 
 private fun withZero(num: Int): String =
-    if (num.toString().count() == 1) "0$num" else num.toString()
-
-fun LocalDateTime.plus(time: LocalTime): LocalDateTime =
-    plusSeconds(time.second.toLong()).plusMinutes(time.minute.toLong())
-        .plusHours(time.hour.toLong())
+    if (num.toString().length == 1) "0$num" else num.toString()
 
 class LocalDateTimeJsonAdapter : TypeAdapter<LocalDateTime>() {
     override fun write(out: JsonWriter, value: LocalDateTime?) {

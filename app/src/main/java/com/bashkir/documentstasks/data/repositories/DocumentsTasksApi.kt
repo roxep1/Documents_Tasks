@@ -10,17 +10,17 @@ interface DocumentsTasksApi {
     @GET("users")
     suspend fun getUsers(): List<User>
 
-    @GET("user/{id}/tasks")
-    suspend fun getAllTasks(@Path("id") userId: String): List<Task>
+    @GET("user/tasks")
+    suspend fun getAllTasks(): List<Task>
 
-    @GET("user/{id}/documents")
-    suspend fun getCreatedDocuments(@Path("id") userId: String): List<Document>
+    @GET("user/documents")
+    suspend fun getCreatedDocuments(): List<Document>
 
-    @GET("user/{id}/familiarizes")
-    suspend fun getAllFamiliarizes(@Path("id") userId: String): List<Familiarize>
+    @GET("user/familiarizes")
+    suspend fun getAllFamiliarizes(): List<Familiarize>
 
-    @GET("user/{id}/agreements")
-    suspend fun getAllAgreements(@Path("id") userId: String): List<Agreement>
+    @GET("user/agreements")
+    suspend fun getAllAgreements(): List<Agreement>
 
     @PUT("document/familiarize/{id}")
     suspend fun familiarize(@Path("id") familiarizeId: Int)
@@ -55,4 +55,7 @@ interface DocumentsTasksApi {
 
     @PUT("document")
     suspend fun updateDocument(@Body document: DocumentForm)
+
+    @POST("login")
+    suspend fun login(@Body idToken: String)
 }

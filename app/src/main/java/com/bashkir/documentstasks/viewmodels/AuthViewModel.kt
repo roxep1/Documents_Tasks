@@ -20,7 +20,7 @@ class AuthViewModel(
 
     fun checkSignedIn() =
         GoogleSignIn.getLastSignedInAccount(context)?.let {
-            setSignedUserId(it)
+            setSignedUser(it)
         }
 
     fun setLoading() = setState { copy(userId = Loading()) }
@@ -29,20 +29,21 @@ class AuthViewModel(
 
     fun setUninitialized() = setState { copy(userId = Uninitialized) }
 
-    private fun setSignedUserId(account: GoogleSignInAccount) = setSignedUserId(account.id!!)
+    private fun setSignedUser(account: GoogleSignInAccount) =
+        setSignedUser(account.id!!, account.idToken!!)
 
     fun onSignInResult(task: Task<GoogleSignInAccount>?) =
         try {
             val account = task?.getResult(ApiException::class.java)
             if (account != null)
-                setSignedUserId(account)
+                setSignedUser(account)
             else setFailed()
         } catch (e: ApiException) {
             setFailed(e)
         }
 
-    private fun setSignedUserId(id: String) = suspend {
-        service.authorizeUser(id)
+    private fun setSignedUser(id: String, idToken: String) = suspend {
+        service.authorizeUser(id, idToken)
     }.execute { copy(userId = it) }
 
     companion object : MavericksViewModelFactory<AuthViewModel, AuthState>, KoinComponent {

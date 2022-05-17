@@ -5,7 +5,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.airbnb.mvrx.Async
 import com.bashkir.documentstasks.data.models.AgreementForm
 import com.bashkir.documentstasks.data.models.User
-import com.bashkir.documentstasks.utils.plus
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
@@ -53,7 +52,7 @@ fun AddAgreementDialog(
         "Выберете время срока сдачи",
         onBackClick = dialogState::show
     ) {
-        deadline = deadline.plus(it)
+        deadline = deadline.with(it)
         usersState.show()
     }
 }

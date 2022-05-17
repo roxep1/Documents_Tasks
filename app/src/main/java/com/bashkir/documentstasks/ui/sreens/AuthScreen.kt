@@ -29,7 +29,6 @@ import com.bashkir.documentstasks.utils.authNavigate
 import com.bashkir.documentstasks.viewmodels.AuthState
 import com.bashkir.documentstasks.viewmodels.AuthViewModel
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
     ConstraintLayout(

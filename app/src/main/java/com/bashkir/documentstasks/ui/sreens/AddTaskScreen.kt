@@ -23,7 +23,6 @@ import com.bashkir.documentstasks.ui.components.views.DeadlineView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.ui.theme.placeHolderText
 import com.bashkir.documentstasks.ui.theme.titleText
-import com.bashkir.documentstasks.utils.plus
 import com.bashkir.documentstasks.viewmodels.TasksState
 import com.bashkir.documentstasks.viewmodels.TasksViewModel
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -78,11 +77,11 @@ fun AddTaskScreenBody(navController: NavController, viewModel: TasksViewModel) =
         )
 
         DatePickerDialog(dialogState = dateDialogState) {
-            taskDeadLine = it.atStartOfDay()
+            taskDeadLine = taskDeadLine.with(it)
         }
 
         TimePickerDialog(dialogState = timeDialogState) {
-            taskDeadLine = taskDeadLine.plus(it)
+            taskDeadLine = taskDeadLine.with(it)
         }
 
         AddUserDialog(usersDialogState, taskPerformers, users, viewModel::getAllUsers)
