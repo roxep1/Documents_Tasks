@@ -1,11 +1,10 @@
 package com.bashkir.documentstasks.data.repositories
 
 import com.bashkir.documentstasks.data.models.*
+import retrofit2.Response
 import retrofit2.http.*
 
 interface DocumentsTasksApi {
-    @GET("user/{id}")
-    suspend fun getUser(@Path("id") userId: String): User
 
     @GET("users")
     suspend fun getUsers(): List<User>
@@ -56,6 +55,7 @@ interface DocumentsTasksApi {
     @PUT("document")
     suspend fun updateDocument(@Body document: DocumentForm)
 
+    @FormUrlEncoded
     @POST("login")
-    suspend fun login(@Body idToken: String)
+    suspend fun login(@Field("idToken") token: String): User
 }

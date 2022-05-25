@@ -5,8 +5,7 @@ class AuthService : SharedService() {
     suspend fun authorizeUser(userId: String, idToken: String): String {
         if (preferences.getAuthorizedIdIfExist() == userId && !isOnline)
             return userId
-        api.login(idToken)
-        val user = api.getUser(userId)
+        val user = api.login(idToken)
         userDao.addLocalUser(user.toEntity())
         if (!isAuthorized(user.id))
             preferences.authorizeUser(user.id)
