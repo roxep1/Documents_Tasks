@@ -7,10 +7,7 @@ import com.bashkir.documentstasks.data.models.*
 import com.bashkir.documentstasks.data.services.TasksService
 import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption
 import com.bashkir.documentstasks.ui.components.filters.TaskFilterOption.*
-import com.bashkir.documentstasks.utils.filter
-import com.bashkir.documentstasks.utils.getAllFromUri
-import com.bashkir.documentstasks.utils.getExtension
-import com.bashkir.documentstasks.utils.writeDocument
+import com.bashkir.documentstasks.utils.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -64,8 +61,8 @@ class TasksViewModel(
         service.addCommentToTask(task, comment)
     }.executeWithTaskUpdate()
 
-    fun addTask(task: TaskForm) = suspend {
-        service.addTask(task)
+    fun addTask(task: TaskForm, files: List<FileForm>) = suspend {
+        service.addTask(task, files)
     }.executeWithTaskUpdate()
 
     fun completeTask(task: Task) = suspend {
@@ -81,24 +78,31 @@ class TasksViewModel(
     }.executeWithTaskUpdate()
 
     fun addDocumentToTask(task: Task, uri: Uri?) = uri?.let {
-        getAllFromUri(uri, context) { name, _, bytes ->
+        getAllFromUri(uri, context) { name, size, bytes ->
             suspend {
                 service.addDocumentToTask(
                     task,
-                    DocumentForm(name!!, bytes!!, name.getExtension(), null, listOf(), listOf())
+                    DocumentForm(name!!, null, listOf(), listOf()),
+                    FileForm(name.withoutExtension(), size?.toMB(), bytes!!, name.getExtension())
                 )
             }.executeWithTaskUpdate()
         }
     }
 
-    fun downloadDocument(document: Document, uri: Uri?) = writeDocument(document, uri, context)
+    fun getDataOfFile(
+        uri: Uri?,
+        onResult: (String?, Float?, ByteArray?) -> Unit
+    ) = getAllFromUri(uri, context) { name, size, bytes ->
+        onResult(name, size?.toMB(), bytes)
+    }
 
     private fun (suspend () -> Unit).executeWithTaskUpdate() = execute {
         if (it is Success) getAllTasks()
-        copy()
+        copy(loadingState = it)
     }
 
-    companion object : MavericksViewModelFactory<TasksViewModel, TasksState>, KoinComponent {
+    companion object : MavericksViewModelFactory<TasksViewModel, TasksState>,
+        KoinComponent {
         override fun create(
             viewModelContext: ViewModelContext,
             state: TasksState
@@ -108,5 +112,7 @@ class TasksViewModel(
 
 data class TasksState(
     val tasks: Async<List<Task>> = Uninitialized,
-    val users: Async<List<User>> = Uninitialized
+    val users: Async<List<User>> = Uninitialized,
+    val file: Async<File> = Uninitialized,
+    val loadingState: Async<Unit> = Uninitialized
 ) : MavericksState

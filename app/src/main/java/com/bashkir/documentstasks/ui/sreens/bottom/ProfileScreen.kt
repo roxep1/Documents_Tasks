@@ -13,8 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.airbnb.mvrx.Loading
+import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.Uninitialized
 import com.airbnb.mvrx.compose.collectAsState
+import com.bashkir.documentstasks.ui.components.LoadingScreen
 import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.components.topbars.TopBarBottomNav
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
@@ -28,44 +31,53 @@ fun ProfileScreenBody(navController: NavController, viewModel: ProfileViewModel)
     topBar = { TopBarBottomNav(navController = navController, titleText = "Профиль") }
 ) { paddingValues ->
     val user by viewModel.collectAsState { it.user }
+    val logoutState by viewModel.collectAsState { it.logoutState }
+
     Column(
         Modifier
             .fillMaxSize()
             .padding(dimens.normalPadding)
     ) {
-        AsyncView(user, errorText = "Не удалось загрузить авторизованного пользователя", {}) {loadedUser, _ ->
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                Column {
-                    Text(
-                        loadedUser.fullName,
-                        style = titleText,
-                        modifier = Modifier.padding(bottom = dimens.articlePadding)
-                    )
-
-                    Text(
-                        loadedUser.email,
-                        style = normalText
-                    )
-                }
-
-                OutlinedButton(
-                    onClick = viewModel::logout,
-                    modifier = Modifier
-                        .padding(dimens.normalPadding)
-                        .align(Alignment.BottomCenter)
+        if (logoutState !is Loading)
+            AsyncView(
+                user,
+                errorText = "Не удалось загрузить авторизованного пользователя",
+                {}) { loadedUser, _ ->
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
                 ) {
-                    Text("Выйти", style = titleText)
+                    Column {
+                        Text(
+                            loadedUser.fullName,
+                            style = titleText,
+                            modifier = Modifier.padding(bottom = dimens.articlePadding)
+                        )
+
+                        Text(
+                            loadedUser.email,
+                            style = normalText
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = viewModel::logout,
+                        modifier = Modifier
+                            .padding(dimens.normalPadding)
+                            .align(Alignment.BottomCenter)
+                    ) {
+                        Text("Выйти", style = titleText)
+                    }
                 }
             }
-        }
+        else LoadingScreen()
 
-        LaunchedEffect(user) {
-            if (user is Uninitialized)
+        LaunchedEffect(logoutState) {
+            if (logoutState is Success) {
                 navController.logoutNavigate()
+                viewModel.clearLogoutState()
+            }
         }
     }
 }

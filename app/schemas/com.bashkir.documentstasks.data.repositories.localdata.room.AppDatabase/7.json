@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "b5b7bb4ee3a4f019bf69d0aa5748da51",
+    "identityHash": "c5a4539377d747bb9a6dad231539dbb5",
     "entities": [
       {
         "tableName": "user",
@@ -201,7 +201,7 @@
       },
       {
         "tableName": "document",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `file` BLOB NOT NULL, `created` TEXT NOT NULL, `extension` TEXT NOT NULL, `desc` TEXT, `templateId` TEXT, `userId` TEXT NOT NULL, `firstName` TEXT NOT NULL DEFAULT '', `secondName` TEXT NOT NULL, `middleName` TEXT, `email` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `created` TEXT NOT NULL, `desc` TEXT, `templateId` TEXT, `taskId` INTEGER, `userId` TEXT NOT NULL, `firstName` TEXT NOT NULL DEFAULT '', `secondName` TEXT NOT NULL, `middleName` TEXT, `email` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -216,20 +216,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "file",
-            "columnName": "file",
-            "affinity": "BLOB",
-            "notNull": true
-          },
-          {
             "fieldPath": "created",
             "columnName": "created",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "extension",
-            "columnName": "extension",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -243,6 +231,12 @@
             "fieldPath": "templateId",
             "columnName": "templateId",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "taskId",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -288,7 +282,7 @@
       },
       {
         "tableName": "agreement",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `deadline` TEXT NOT NULL, `status` TEXT NOT NULL, `created` TEXT NOT NULL, `comment` TEXT, `statusChanged` TEXT, `userId` TEXT NOT NULL, `firstName` TEXT NOT NULL DEFAULT '', `secondName` TEXT NOT NULL, `middleName` TEXT, `email` TEXT NOT NULL, `documentid` INTEGER NOT NULL, `documenttitle` TEXT NOT NULL, `documentfile` BLOB NOT NULL, `documentcreated` TEXT NOT NULL, `documentextension` TEXT NOT NULL, `documentdesc` TEXT, `documenttemplateId` TEXT, `documentuserId` TEXT NOT NULL, `documentfirstName` TEXT NOT NULL DEFAULT '', `documentsecondName` TEXT NOT NULL, `documentmiddleName` TEXT, `documentemail` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `deadline` TEXT NOT NULL, `status` TEXT NOT NULL, `created` TEXT NOT NULL, `comment` TEXT, `statusChanged` TEXT, `userId` TEXT NOT NULL, `firstName` TEXT NOT NULL DEFAULT '', `secondName` TEXT NOT NULL, `middleName` TEXT, `email` TEXT NOT NULL, `documentid` INTEGER NOT NULL, `documenttitle` TEXT NOT NULL, `documentcreated` TEXT NOT NULL, `documentdesc` TEXT, `documenttemplateId` TEXT, `documenttaskId` INTEGER, `documentuserId` TEXT NOT NULL, `documentfirstName` TEXT NOT NULL DEFAULT '', `documentsecondName` TEXT NOT NULL, `documentmiddleName` TEXT, `documentemail` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -370,20 +364,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "document.file",
-            "columnName": "documentfile",
-            "affinity": "BLOB",
-            "notNull": true
-          },
-          {
             "fieldPath": "document.created",
             "columnName": "documentcreated",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "document.extension",
-            "columnName": "documentextension",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -397,6 +379,12 @@
             "fieldPath": "document.templateId",
             "columnName": "documenttemplateId",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "document.taskId",
+            "columnName": "documenttaskId",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -442,7 +430,7 @@
       },
       {
         "tableName": "familiarize",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `checked` INTEGER NOT NULL, `created` TEXT NOT NULL, `userId` TEXT NOT NULL, `firstName` TEXT NOT NULL DEFAULT '', `secondName` TEXT NOT NULL, `middleName` TEXT, `email` TEXT NOT NULL, `documentid` INTEGER NOT NULL, `documenttitle` TEXT NOT NULL, `documentfile` BLOB NOT NULL, `documentcreated` TEXT NOT NULL, `documentextension` TEXT NOT NULL, `documentdesc` TEXT, `documenttemplateId` TEXT, `documentuserId` TEXT NOT NULL, `documentfirstName` TEXT NOT NULL DEFAULT '', `documentsecondName` TEXT NOT NULL, `documentmiddleName` TEXT, `documentemail` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `checked` INTEGER NOT NULL, `created` TEXT NOT NULL, `userId` TEXT NOT NULL, `firstName` TEXT NOT NULL DEFAULT '', `secondName` TEXT NOT NULL, `middleName` TEXT, `email` TEXT NOT NULL, `documentid` INTEGER NOT NULL, `documenttitle` TEXT NOT NULL, `documentcreated` TEXT NOT NULL, `documentdesc` TEXT, `documenttemplateId` TEXT, `documenttaskId` INTEGER, `documentuserId` TEXT NOT NULL, `documentfirstName` TEXT NOT NULL DEFAULT '', `documentsecondName` TEXT NOT NULL, `documentmiddleName` TEXT, `documentemail` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -506,20 +494,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "document.file",
-            "columnName": "documentfile",
-            "affinity": "BLOB",
-            "notNull": true
-          },
-          {
             "fieldPath": "document.created",
             "columnName": "documentcreated",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "document.extension",
-            "columnName": "documentextension",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -533,6 +509,12 @@
             "fieldPath": "document.templateId",
             "columnName": "documenttemplateId",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "document.taskId",
+            "columnName": "documenttaskId",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -661,7 +643,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b5b7bb4ee3a4f019bf69d0aa5748da51')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c5a4539377d747bb9a6dad231539dbb5')"
     ]
   }
 }

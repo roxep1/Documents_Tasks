@@ -4,14 +4,19 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import com.airbnb.mvrx.Fail
+import com.airbnb.mvrx.Loading
+import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.compose.collectAsState
 import com.bashkir.documentstasks.contracts.DocumentCreateContract
 import com.bashkir.documentstasks.contracts.DocumentSelectContract
@@ -20,6 +25,7 @@ import com.bashkir.documentstasks.ui.components.Label
 import com.bashkir.documentstasks.ui.components.buttons.StyledTextButton
 import com.bashkir.documentstasks.ui.components.topbars.TopBar
 import com.bashkir.documentstasks.ui.components.views.AgreementsView
+import com.bashkir.documentstasks.ui.components.views.AsyncLoadingView
 import com.bashkir.documentstasks.ui.components.views.AsyncView
 import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme.dimens
 import com.bashkir.documentstasks.utils.formatToString
@@ -33,27 +39,34 @@ fun DocumentDetailScreenBody(
     viewModel: DocumentsViewModel
 ) {
     val documents by viewModel.collectAsState { it.documents }
+    val loadingState by viewModel.collectAsState { it.loadingState }
     var title by remember { mutableStateOf("Документ") }
 
-    Scaffold(
-        topBar = { TopBar(title, navController) }
-    ) {
-        AsyncView(
-            async = documents,
-            errorText = "Неудалось загрузить документы",
-            onUpdate = viewModel::getAllDocuments
-        ) { loadedDocuments, _ ->
-            loadedDocuments.find { document -> document.toDocument().id == documentId }
-                ?.let { document ->
-                    title = document.toDocument().title
-                    DocumentDetailView(document, viewModel)
-                }
+    AsyncLoadingView(loadingState) {
+        Scaffold(
+            topBar = { TopBar(title, navController) }
+        ) {
+            AsyncView(
+                async = documents,
+                errorText = "Неудалось загрузить документы",
+                onUpdate = viewModel::getAllDocuments
+            ) { loadedDocuments, _ ->
+                loadedDocuments.find { document -> document.toDocument().id == documentId }
+                    ?.let { document ->
+                        title = document.toDocument().title
+                        DocumentDetailView(document, viewModel, navController)
+                    }
+            }
         }
     }
 }
 
 @Composable
-private fun DocumentDetailView(document: Documentable, viewModel: DocumentsViewModel) =
+private fun DocumentDetailView(
+    document: Documentable,
+    viewModel: DocumentsViewModel,
+    navController: NavController
+) =
     Column(
         Modifier
             .padding(dimens.normalPadding)
@@ -74,23 +87,42 @@ private fun DocumentDetailView(document: Documentable, viewModel: DocumentsViewM
                 }
             }
         }
+
+        val file by viewModel.collectAsState { it.file }
+        val errorFile = rememberMaterialDialogState()
         val downloadDocLauncher =
             rememberLauncherForActivityResult(
                 contract = DocumentCreateContract(),
-                onResult = { viewModel.downloadDocument(document.toDocument(), it) }
+                onResult = { viewModel.downloadDocument(file()!!, it) }
             )
+        if (file !is Loading)
+            StyledTextButton(
+                Modifier.align(CenterHorizontally),
+                "Скачать документ",
+                onClick = {
+                    viewModel.getFile(document.toDocument())
+                }
+            )
+        else CircularProgressIndicator(Modifier.align(CenterHorizontally))
+        MaterialDialog(errorFile) {
+            title("Не удалось загрузить файл")
+            message((file as Fail).error.message)
+        }
 
-        StyledTextButton(
-            Modifier.align(CenterHorizontally),
-            "Скачать документ",
-            onClick = {
-                downloadDocLauncher.launch(document.toDocument())
-            }
-        )
+        LaunchedEffect(file) {
+            if (file is Success)
+                downloadDocLauncher.launch(file())
+            else if (file is Fail)
+                errorFile.show()
+        }
 
         when (document) {
             is Agreement -> AgreementView(document, viewModel)
-            is Document -> DocumentView(document, viewModel)
+            is Document -> if (viewModel.isAuthor(document)) DocumentView(
+                document,
+                viewModel,
+                navController
+            )
             is Familiarize -> FamiliarizeView(document, viewModel)
         }
     }
@@ -108,19 +140,57 @@ private fun ColumnScope.FamiliarizeView(familiarize: Familiarize, viewModel: Doc
     } else Text("Вы уже ознакомлены с данным документом")
 
 @Composable
-private fun ColumnScope.DocumentView(document: Document, viewModel: DocumentsViewModel) {
+private fun ColumnScope.DocumentView(
+    document: Document,
+    viewModel: DocumentsViewModel,
+    navController: NavController
+) {
     val updateDocLauncher =
         rememberLauncherForActivityResult(
             contract = DocumentSelectContract(),
             onResult = { viewModel.updateDocument(document, it) }
         )
+    val updateDocumentState by viewModel.collectAsState { it.updateDocumentState }
+    val errorDialog = rememberMaterialDialogState()
+    val deleteDialog = rememberMaterialDialogState()
+
+    MaterialDialog(errorDialog) {
+        title("Что-то пошло не так")
+        message((updateDocumentState as Fail).error.message)
+    }
+
+    LaunchedEffect(updateDocumentState) {
+        if (updateDocumentState is Fail)
+            errorDialog.show()
+    }
+
+    if (updateDocumentState !is Loading)
+        OutlinedButton(
+            onClick = { updateDocLauncher.launch(0) },
+            Modifier.align(CenterHorizontally)
+        ) {
+            Text("Обновить документ")
+        }
+    else CircularProgressIndicator(Modifier.align(CenterHorizontally))
 
     OutlinedButton(
-        onClick = { updateDocLauncher.launch(0) },
+        onClick = deleteDialog::show,
         Modifier.align(CenterHorizontally)
     ) {
-        Text("Обновить документ")
+        Text("Удалить документ")
     }
+
+    MaterialDialog(deleteDialog, buttons = {
+        positiveButton("Удалить") {
+            viewModel.deleteDocument(document)
+            navController.popBackStack()
+        }
+        negativeButton("Отмена")
+    }) {
+        title("Внимание")
+        message("Вы точно хотите удалить этот документ?")
+    }
+
     if (document.agreement.isNotEmpty()) {
         Label("На согласование отправлено:")
         document.agreement.AgreementsView()
@@ -130,7 +200,10 @@ private fun ColumnScope.DocumentView(document: Document, viewModel: DocumentsVie
         Label("На ознакомление отправлено:")
         LazyColumn(Modifier.align(CenterHorizontally)) {
             items(document.familiarize) { familiarize ->
-                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(familiarize.user.fullName)
                     Text(if (familiarize.checked) "Ознакомлен" else "Не ознакомлен")
                 }
@@ -155,23 +228,23 @@ private fun AgreementView(agreement: Agreement, viewModel: DocumentsViewModel) {
             Text(agreement.status.text, style = agreement.status.textStyle)
         }
     }
+
     agreement.comment?.let {
         Spacer(modifier = Modifier.height(dimens.normalPadding))
         Text("Вы оставили комментарий к выполнению:\n${agreement.comment}")
     }
-    Row {
+
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = CenterHorizontally) {
         if (agreement.status != AgreementStatus.Agreed)
             OutlinedButton(
-                onClick = agreedDialogState::show,
-                Modifier.weight(1F)
+                onClick = agreedDialogState::show
             ) {
                 Text("Согласовать")
             }
 
         if (agreement.status != AgreementStatus.Declined)
             OutlinedButton(
-                onClick = declineDialogState::show,
-                Modifier.weight(1F)
+                onClick = declineDialogState::show
             ) {
                 Text("Отказать в согласовании")
             }

@@ -40,76 +40,66 @@ class DocumentsViewModel(
             ISSUED -> documents.filterIsInstance<Document>()
         }.filter(searchText)
 
-    fun downloadDocument(document: Document, uri: Uri?) = writeDocument(document, uri, context)
+    fun downloadDocument(file: File, uri: Uri?) {
+        writeDocument(file, uri, context)
+        setState { copy(file = Uninitialized) }
+    }
 
-    fun addDocument(document: DocumentForm) = suspend {
-        service.addDocument(document)
+    fun addDocument(document: DocumentForm, file: FileForm) = suspend {
+        service.addDocument(document, file)
     }.execute {
         if (it is Success)
             getAllDocuments()
         copy(addingDocumentState = it)
     }
 
+    fun deleteDocument(document: Document) = suspend {
+        service.deleteDocument(document)
+    }.executeWithUpdate()
+
     fun agreedDocument(agreement: Agreement) = suspend {
         service.agreedDocument(agreement)
-    }.execute {
-        getAllDocuments()
-        copy()
-    }
+    }.executeWithUpdate()
 
     fun agreedDocument(agreement: Agreement, comment: String) = suspend {
         service.agreedDocument(agreement, comment)
-    }.execute {
-        getAllDocuments()
-        copy()
-    }
+    }.executeWithUpdate()
 
     fun declineDocument(agreement: Agreement) = suspend {
         service.declineDocument(agreement)
-    }.execute {
-        getAllDocuments()
-        copy()
-    }
+    }.executeWithUpdate()
 
     fun declineDocument(agreement: Agreement, comment: String) = suspend {
         service.declineDocument(agreement, comment)
-    }.execute {
-        getAllDocuments()
-        copy()
-    }
+    }.executeWithUpdate()
 
     fun updateDocument(document: Document, newFileUri: Uri?) =
         getBytesDocument(newFileUri, context)?.let { bytes ->
-            getMetadata(newFileUri, context) { fileName, _ ->
+            getMetadata(newFileUri, context) { fileName, size ->
                 suspend {
-                    service.updateDocument(document.run {
-                        DocumentForm(
-                            title,
-                            bytes,
-                            fileName?.getExtension() ?: extension,
-                            desc,
-                            listOf(),
-                            listOf(),
-                            author.toForm(),
-                            templateId,
-                            id
+                    if (size != null && size.toMB() <= 2.0F)
+                        service.updateDocument(
+                            document.id,
+                            FileForm(
+                                fileName!!.withoutExtension(),
+                                size.toMB(),
+                                bytes,
+                                fileName.getExtension()
+                            )
                         )
-                    })
+                    else throw Exception("Размер файла не может превышать 2Мб.")
                 }.execute {
                     if (it is Success)
                         getAllDocuments()
 
-                    copy()
+                    copy(updateDocumentState = it)
                 }
             }
         }
 
     fun familiarizeDocument(familiarize: Familiarize) = suspend {
         service.familiarizeDocument(familiarize)
-    }.execute {
-        getAllDocuments()
-        copy()
-    }
+    }.executeWithUpdate()
 
     fun endAddingSession(navController: NavController) {
         setState { copy(addingDocumentState = Uninitialized) }
@@ -124,6 +114,12 @@ class DocumentsViewModel(
     fun getMetadata(uri: Uri?, onResult: (String?, Long?) -> Unit) =
         getMetadata(uri, context, onResult)
 
+    fun getFile(document: Document) = suspend {
+        service.getFile(document)
+    }.execute { copy(file = it) }
+
+    fun isAuthor(document: Document): Boolean = service.isMyId(document.author.id)
+
     companion object : MavericksViewModelFactory<DocumentsViewModel, DocumentsState>,
         KoinComponent {
         override fun create(
@@ -131,10 +127,17 @@ class DocumentsViewModel(
             state: DocumentsState
         ): DocumentsViewModel = get { parametersOf(state) }
     }
+    private fun (suspend () -> Unit).executeWithUpdate() = execute {
+        if(it is Success) getAllDocuments()
+        copy(loadingState = it)
+    }
 }
 
 data class DocumentsState(
     val documents: Async<List<Documentable>> = Uninitialized,
     val users: Async<List<User>> = Uninitialized,
     val addingDocumentState: Async<Unit> = Uninitialized,
+    val file: Async<File> = Uninitialized,
+    val updateDocumentState: Async<Unit> = Uninitialized,
+    val loadingState: Async<Unit> = Uninitialized
 ) : MavericksState

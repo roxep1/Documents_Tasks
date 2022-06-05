@@ -16,11 +16,12 @@ class ProfileViewModel(
     private val service: ProfileService
 ) : MavericksViewModel<ProfileState>(initialState) {
 
-    fun logout() {
+    fun logout() = suspend {
         GoogleSignIn.getClient(context, GoogleSignInOptions.DEFAULT_SIGN_IN).signOut()
         service.logout()
-        setState { copy(user = Uninitialized) }
-    }
+    }.execute { copy(logoutState = it) }
+
+    fun clearLogoutState() = setState { copy(logoutState = Uninitialized) }
 
     fun getAuthorizedUser() = suspend { service.getAuthorizedUser() }.execute { copy(user = it) }
 
@@ -33,5 +34,6 @@ class ProfileViewModel(
 }
 
 data class ProfileState(
-    val user: Async<User> = Uninitialized
+    val user: Async<User> = Uninitialized,
+    val logoutState: Async<Unit> = Uninitialized
 ) : MavericksState

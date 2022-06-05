@@ -4,8 +4,9 @@ import com.bashkir.documentstasks.data.models.User
 
 class ProfileService : SharedService() {
 
-    fun logout() {
+    suspend fun logout() {
         preferences.logoutUser()
+        api.logout()
     }
 
     suspend fun getAuthorizedUser(): User =

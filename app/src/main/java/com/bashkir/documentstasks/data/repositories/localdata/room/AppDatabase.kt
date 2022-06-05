@@ -13,9 +13,9 @@ import com.bashkir.documentstasks.data.models.*
         AgreementEntity::class,
         FamiliarizeEntity::class,
         Notification::class],
-    version = 6,
+    version = 7,
     autoMigrations = [
-        AutoMigration(from = 5, to = 6, spec = AppDatabase.DocumentsTasksAutoMigration::class)
+        AutoMigration(from = 6, to = 7, spec = AppDatabase.DocumentsTasksAutoMigration::class)
     ]
 )
 @TypeConverters(Converters::class)
@@ -27,15 +27,27 @@ abstract class AppDatabase : RoomDatabase() {
 
     @DeleteColumn(
         tableName = "agreement",
-        columnName = "documentdownloadedUri"
+        columnName = "documentfile"
+    )
+    @DeleteColumn(
+    tableName = "agreement",
+    columnName = "documentextension"
     )
     @DeleteColumn(
     tableName = "familiarize",
-    columnName = "documentdownloadedUri"
+    columnName = "documentextension"
+    )
+    @DeleteColumn(
+    tableName = "familiarize",
+    columnName = "documentfile"
     )
     @DeleteColumn(
     tableName = "document",
-    columnName = "downloadedUri"
+    columnName = "extension"
+    )
+    @DeleteColumn(
+    tableName = "document",
+    columnName = "file"
     )
     class DocumentsTasksAutoMigration : AutoMigrationSpec
 }

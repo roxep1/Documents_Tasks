@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import com.bashkir.documentstasks.data.models.Document
+import com.bashkir.documentstasks.data.models.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
@@ -38,12 +39,15 @@ fun getAllFromUri(uri: Uri?, context: Context, onResult: (String?, Long?, ByteAr
         }
     }
 
-fun writeDocument(document: Document, uri: Uri?, context: Context) {
+fun writeDocument(file: File, uri: Uri?, context: Context) {
     uri?.let {
         context.contentResolver.openFileDescriptor(uri, "w")?.use {
             FileOutputStream(it.fileDescriptor).use { stream ->
-                stream.write(document.file)
+                stream.write(file.file)
             }
         }
     }
 }
+
+fun Long.toMB(): Float = "${div(1000000)}.${
+    (this % 1000000)}".toFloat()

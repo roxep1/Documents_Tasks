@@ -91,7 +91,10 @@ private fun ConstraintLayoutScope.ErrorText(
     authButton: ConstrainedLayoutReference,
     fail: Fail<*>
 ) = Text(
-    "Авторизация не удалась ${fail.error.message?.let { "($it)" }}",
+    "Авторизация не удалась: " +
+            "${if (fail.error.message == null)
+                "Авторизация возможна только через корпоративную почту сотрудника школы."
+            else fail.error.message}",
     style = titleText,
     color = Color.Red,
     modifier = Modifier

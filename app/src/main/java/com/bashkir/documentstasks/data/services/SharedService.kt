@@ -1,8 +1,6 @@
 package com.bashkir.documentstasks.data.services
 
-import com.bashkir.documentstasks.data.models.Perform
-import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.data.models.User
+import com.bashkir.documentstasks.data.models.*
 import com.bashkir.documentstasks.data.repositories.DocumentsTasksApi
 import com.bashkir.documentstasks.data.repositories.localdata.preferences.LocalUserPreferences
 import com.bashkir.documentstasks.data.repositories.localdata.room.UserDao
@@ -32,4 +30,8 @@ open class SharedService {
         withAuthorizedId { id -> tasks.filter { it.author.id != id } }
 
     fun getMyPerform(task: Task): Perform = getMyPerforms(task).first()
+
+    suspend fun getFile(document: Document): File = api.getFile(document.id)
+
+    fun isMyId(userId: String): Boolean = preferences.authorizedId == userId
 }

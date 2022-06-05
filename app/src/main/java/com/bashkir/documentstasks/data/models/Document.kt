@@ -9,36 +9,23 @@ data class Document(
     val id: Int,
     val author: User,
     val title: String,
-    val file: ByteArray,
 
     @JsonAdapter(LocalDateTimeJsonAdapter::class)
     val created: LocalDateTime,
-    val extension: String,
     val desc: String? = null,
     val templateId: String? = null,
+    val taskId: Int? = null,
     val familiarize: List<Familiarize> = listOf(),
     val agreement: List<Agreement> = listOf()
 ) : Documentable {
     override fun toDocument(): Document = this
 
     fun toEntity(): DocumentEntity =
-        DocumentEntity(id, author.toEntity(), title, file, created, extension, desc, templateId)
-
-    fun getFileType(): String = "application/${
-        when (extension) {
-            "docx" -> "vnd.openxmlformats-officedocument.wordprocessingml.document"
-            "doc" -> "msword"
-            "xls" -> "vnd.ms-excel"
-            "xlsx" -> "vnd.ms-excel"
-            else -> extension
-        }
-    }"
+        DocumentEntity(id, author.toEntity(), title, created, desc, templateId, taskId)
 }
 
 data class DocumentForm(
     val title: String,
-    val file: ByteArray,
-    val extension: String,
     val desc: String?,
     val familiarize: List<FamiliarizeForm>,
     val agreement: List<AgreementForm>,
@@ -52,14 +39,13 @@ data class DocumentEntity(
     @PrimaryKey val id: Int,
     @Embedded val author: UserEntity,
     val title: String,
-    val file: ByteArray,
     val created: LocalDateTime,
-    val extension: String,
     @Nullable val desc: String?,
-    val templateId: String?
+    val templateId: String?,
+    @Nullable val taskId: Int?
 ) {
     fun toDocument(): Document =
-        Document(id, author.toUser(), title, file, created, extension, desc, templateId)
+        Document(id, author.toUser(), title, created, desc, templateId)
 }
 
 data class FullLocalDocument(
@@ -81,11 +67,10 @@ data class FullLocalDocument(
             id,
             author,
             title,
-            file,
             created,
-            extension,
             desc,
             templateId,
+            taskId,
             familiarizes.map { it.toFamiliarize()},
             agreements.map { it.toAgreement() }
         )

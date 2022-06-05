@@ -71,20 +71,18 @@ fun UserCard(
 private fun List(
     label: String,
     addUserBtn: @Composable () -> Unit,
-    content: LazyListScope.() -> Unit
+    content: @Composable () -> Unit
 ) = Column {
     Label("$label: ")
-    LazyColumn(
+    Column(
         Modifier
             .fillMaxWidth()
-            .height(dimens.maxListHeight)
+//            .height(dimens.maxListHeight)
             .padding(top = dimens.articlePadding)
     ) {
         content()
-        item {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                addUserBtn()
-            }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            addUserBtn()
         }
     }
 }
@@ -96,7 +94,7 @@ fun UsersList(
     label: String = "Пользователи",
     addUserBtn: @Composable () -> Unit = {}
 ) = List(label, addUserBtn) {
-    items(users) { user ->
+    users.forEach { user ->
         UserCard(
             Modifier.padding(top = dimens.articlePadding),
             user = user,
@@ -115,7 +113,7 @@ fun AgreementsList(
     label: String = "Согласования",
     addUserBtn: @Composable () -> Unit = {}
 ) = List(label, addUserBtn) {
-    items(users) { user ->
+    users.forEach { user ->
         agreements.first { it.user.id == user.id }.let { agreement ->
             UserCard(
                 Modifier.padding(top = dimens.articlePadding),

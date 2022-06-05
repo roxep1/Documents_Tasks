@@ -1,12 +1,12 @@
 package com.bashkir.documentstasks.ui.components.views
 
-import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.NavController
 import com.bashkir.documentstasks.data.models.Document
 import com.bashkir.documentstasks.data.models.Perform
 import com.bashkir.documentstasks.ui.components.Label
@@ -15,13 +15,12 @@ import com.bashkir.documentstasks.ui.theme.DocumentsTasksTheme
 
 @Composable
 fun List<Perform>.PerformersView(
-    extended: Boolean = false,
-    onResult: (Uri?, Document) -> Unit = { _, _ -> }
+    navController: NavController? = null
 ) =
     forEach { perform ->
         Column {
             PerformerInfo(perform)
-            if (extended) {
+            if (navController != null) {
                 CheckForAdditionalInfo(
                     perform,
                     comment = {
@@ -30,7 +29,7 @@ fun List<Perform>.PerformersView(
                     },
                     documents = {
                         Label("Файлы исполнителя:")
-                        FilesList(documents = it, onResult = onResult)
+                        FilesList(documents = it, navController)
                     }
                 )
             } else {

@@ -25,5 +25,5 @@ val standardDimens = Dimensions(
     articlePadding = 5.dp,
     smallText = 12.sp,
     smallPadding = 3.dp,
-    maxListHeight = 300.dp
+    maxListHeight = 200.dp
 )

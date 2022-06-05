@@ -28,8 +28,17 @@ class TasksService : TasksNotificationService() {
         }
 
 
-    suspend fun addTask(task: TaskForm) =
-        api.addTask(task.copy(author = UserForm(preferences.authorizedId)))
+    suspend fun addTask(task: TaskForm, files: List<FileForm>) {
+        val user = UserForm(preferences.authorizedId)
+        api.addTask(
+            TaskWithFiles(
+                task.copy(
+                    author = user,
+                    documents = task.documents.map { it.copy(author = user) }),
+                files
+            )
+        )
+    }
 
     suspend fun inProgressTask(task: Task) = api.changePerformStatus(
         getMyPerform(task).id,
@@ -41,20 +50,16 @@ class TasksService : TasksNotificationService() {
         PerformStatus.Completed
     )
 
-    suspend fun addDocumentToTask(task: Task, doc: DocumentForm) = api.addDocumentToPerform(
-        getMyPerform(task).id,
-        doc.copy(author = UserForm(preferences.authorizedId))
-    )
+    suspend fun addDocumentToTask(task: Task, doc: DocumentForm, file: FileForm) =
+        api.addDocumentToPerform(
+            getMyPerform(task).id,
+            DocumentWithFile(doc.copy(author = UserForm(preferences.authorizedId)), file)
+        )
 
     suspend fun addCommentToTask(task: Task, comment: String) = api.addCommentToPerform(
         getMyPerform(task).id,
         comment
     )
-
-    fun onlyIssuedTasks(tasks: List<Task>): List<Task> {
-        val id = preferences.getAuthorizedIdIfExist()
-        return tasks.filter { it.author.id == id }
-    }
 
     suspend fun deleteTask(task: Task) = api.deleteTask(task.id)
 

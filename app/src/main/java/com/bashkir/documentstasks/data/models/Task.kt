@@ -22,7 +22,8 @@ data class Task(
     @JsonAdapter(LocalDateTimeJsonAdapter::class)
     @SerializedName("created")
     val pubDate: LocalDateTime,
-    val performs: List<Perform> = listOf()
+    val performs: List<Perform> = listOf(),
+    val documents: List<Document> = listOf()
 ) {
     val notificationId
         get() = "task$id"
@@ -47,6 +48,7 @@ data class TaskForm(
     @JsonAdapter(LocalDateTimeJsonAdapter::class)
     val deadline: LocalDateTime,
     val performs: List<PerformForm>,
+    val documents: List<DocumentForm>,
     val author: UserForm? = null
 )
 
@@ -66,7 +68,12 @@ data class FullLocalTask(
         parentColumn = "taskId",
         entityColumn = "taskPerformsId"
     )
-    val performs: List<PerformEntity>
+    val performs: List<PerformEntity>,
+    @Relation(
+        parentColumn = "taskId",
+        entityColumn = "taskId"
+    )
+    val documents: List<DocumentEntity>
 ) {
     fun toTask(): Task = task.run {
         Task(
@@ -76,6 +83,8 @@ data class FullLocalTask(
             deadline,
             author.toUser(),
             pubDate,
-            performs.map { it.toPerform() })
+            performs.map { it.toPerform() },
+            documents.map { it.toDocument() }
+        )
     }
 }

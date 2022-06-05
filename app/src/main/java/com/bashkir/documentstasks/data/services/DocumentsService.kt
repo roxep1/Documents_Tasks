@@ -62,7 +62,8 @@ class DocumentsService : NotificationsService() {
 
     suspend fun familiarizeDocument(familiarize: Familiarize) = api.familiarize(familiarize.id)
 
-    suspend fun updateDocument(document: DocumentForm) = api.updateDocument(document)
+    suspend fun updateDocument(documentId: Int, file: FileForm) =
+        api.updateDocument(documentId, file)
 
     suspend fun declineDocument(agreement: Agreement, comment: String) =
         api.agreedWithComment(agreement.id, AgreementStatus.Declined, comment)
@@ -76,6 +77,13 @@ class DocumentsService : NotificationsService() {
     suspend fun agreedDocument(agreement: Agreement) =
         api.agreed(agreement.id, AgreementStatus.Agreed)
 
-    suspend fun addDocument(document: DocumentForm) =
-        api.addDocument(document.copy(author = UserForm(preferences.authorizedId)))
+    suspend fun addDocument(document: DocumentForm, file: FileForm) =
+        api.addDocument(
+            DocumentWithFile(
+                document.copy(author = UserForm(preferences.authorizedId)),
+                file
+            )
+        )
+
+    suspend fun deleteDocument(document: Document) = api.deleteDocument(document.id)
 }

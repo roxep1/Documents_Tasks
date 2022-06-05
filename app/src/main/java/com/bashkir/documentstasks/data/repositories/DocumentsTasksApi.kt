@@ -35,10 +35,10 @@ interface DocumentsTasksApi {
     )
 
     @POST("document")
-    suspend fun addDocument(@Body document: DocumentForm)
+    suspend fun addDocument(@Body document: DocumentWithFile)
 
     @POST("task")
-    suspend fun addTask(@Body task: TaskForm)
+    suspend fun addTask(@Body task: TaskWithFiles)
 
     @DELETE("task/{id}")
     suspend fun deleteTask(@Path("id") taskId: Int)
@@ -50,12 +50,24 @@ interface DocumentsTasksApi {
     suspend fun changePerformStatus(@Path("id") performId: Int, @Body performStatus: PerformStatus)
 
     @POST("document/perform/{id}")
-    suspend fun addDocumentToPerform(@Path("id") performId: Int, @Body document: DocumentForm)
+    suspend fun addDocumentToPerform(
+        @Path("id") performId: Int,
+        @Body document: DocumentWithFile
+    )
 
-    @PUT("document")
-    suspend fun updateDocument(@Body document: DocumentForm)
+    @PUT("document/{id}")
+    suspend fun updateDocument(@Path("id") documentId: Int, @Body file: FileForm)
 
     @FormUrlEncoded
     @POST("login")
     suspend fun login(@Field("idToken") token: String): User
+
+    @GET("document/{id}/file")
+    suspend fun getFile(@Path("id") documentId: Int): File
+
+    @GET("logout")
+    suspend fun logout()
+
+    @DELETE("document/{id}")
+    suspend fun deleteDocument(@Path("id") documentId: Int)
 }
