@@ -38,7 +38,7 @@ class DocumentsViewModel(
             AGREEMENT -> documents.filterIsInstance<Agreement>()
             FAMILIARIZE -> documents.filterIsInstance<Familiarize>()
             ISSUED -> documents.filterIsInstance<Document>()
-        }.filter(searchText)
+        }.filter(searchText).sortedBy { it.toDocument().created }
 
     fun downloadDocument(file: File, uri: Uri?) {
         writeDocument(file, uri, context)

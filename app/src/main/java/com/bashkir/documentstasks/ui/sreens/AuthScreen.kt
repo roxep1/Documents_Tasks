@@ -1,6 +1,7 @@
 package com.bashkir.documentstasks.ui.sreens
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -38,7 +39,7 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
 
         val signInRequestCode = 1
         val userId by viewModel.collectAsState(AuthState::userId)
-        val (button, errorText) = createRefs()
+        val (button, errorText, label) = createRefs()
 
         LaunchedEffect(true) {
             viewModel.checkSignedIn()
@@ -60,6 +61,17 @@ fun AuthScreenBody(viewModel: AuthViewModel, navController: NavController) =
         if (userId is Loading)
             LoadingScreen()
         else {
+            if (!isSystemInDarkTheme())
+                Text(
+                    "Приложение создано под темную тему. Настоятельно рекомендуем попробовать.",
+                    color = Color.Black,
+                    modifier = Modifier
+                        .constrainAs(label) {
+                            top.linkTo(parent.top)
+                        }
+                        .padding(10.dp).fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
             if (userId is Fail)
                 ErrorText(ref = errorText, authButton = button, fail = userId as Fail)
 
@@ -92,9 +104,11 @@ private fun ConstraintLayoutScope.ErrorText(
     fail: Fail<*>
 ) = Text(
     "Авторизация не удалась: " +
-            "${if (fail.error.message == null)
-                "Авторизация возможна только через корпоративную почту сотрудника школы."
-            else fail.error.message}",
+            "${
+                if (fail.error.message == null)
+                    "Авторизация возможна только через корпоративную почту сотрудника школы."
+                else fail.error.message
+            }",
     style = titleText,
     color = Color.Red,
     modifier = Modifier

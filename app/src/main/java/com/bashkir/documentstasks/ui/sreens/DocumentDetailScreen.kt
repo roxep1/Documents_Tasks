@@ -54,7 +54,7 @@ fun DocumentDetailScreenBody(
                 loadedDocuments.find { document -> document.toDocument().id == documentId }
                     ?.let { document ->
                         title = document.toDocument().title
-                        DocumentDetailView(document, viewModel, navController)
+                        DocumentDetailView(document, viewModel, navController, it)
                     }
             }
         }
@@ -65,11 +65,13 @@ fun DocumentDetailScreenBody(
 private fun DocumentDetailView(
     document: Documentable,
     viewModel: DocumentsViewModel,
-    navController: NavController
+    navController: NavController,
+    paddingValues: PaddingValues
 ) =
     Column(
         Modifier
             .padding(dimens.normalPadding)
+            .padding(paddingValues)
             .fillMaxSize()
     ) {
 
@@ -277,7 +279,7 @@ private fun AgreementStatusChangeDialog(
         message("Вы уверены, что хотите изменить статус согласования?")
         input(
             label = "Комментарий",
-            hint = "Вы можете оставить комментарий...",
+            placeholder = "Вы можете оставить комментарий...",
             onInput = { comment = it }
         )
     }

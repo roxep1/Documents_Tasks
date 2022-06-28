@@ -51,7 +51,7 @@ class TasksViewModel(
                     task.deadline.isBefore(LocalDateTime.now()) &&
                             task.performs.any { it.status != PerformStatus.Completed }
                 }
-        }.filter(searchText)
+        }.filter(searchText).sortedBy { it.pubDate }
 
     private fun List<Task>.getIssued(): List<Task> = filter { it.author.id == myId }
 

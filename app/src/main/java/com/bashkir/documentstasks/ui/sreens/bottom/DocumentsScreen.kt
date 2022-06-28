@@ -48,7 +48,7 @@ fun DocumentsScreenBody(navController: NavController, viewModel: DocumentsViewMo
             onUpdate = viewModel::getAllDocuments
         ) { loadedDocuments, isLoading ->
             DocumentCardList(
-                modifier = Modifier.padding(bottom = DocumentsTasksTheme.dimens.normalPadding),
+                modifier = Modifier.padding(it).padding(bottom = DocumentsTasksTheme.dimens.normalPadding),
                 onDetailsClick = navController::navigate,
                 documents = viewModel.filterDocuments(
                     loadedDocuments,

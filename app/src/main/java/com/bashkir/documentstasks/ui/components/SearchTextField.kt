@@ -1,6 +1,7 @@
 package com.bashkir.documentstasks.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -27,8 +28,7 @@ fun SearchTextField(searchTextState: MutableState<TextFieldValue>, modifier: Mod
                 top = dimens.smallPadding,
                 bottom = dimens.smallPadding
             )
-            .fillMaxWidth()
-            .background(Color.Black),
+            .fillMaxWidth(),
         value = searchTextState.value,
         onValueChange = { searchTextState.value = it },
         placeholder = {
@@ -60,5 +60,9 @@ fun SearchTextField(searchTextState: MutableState<TextFieldValue>, modifier: Mod
                 tint = Color.Gray
             )
         },
-        singleLine = true
+        singleLine = true,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            if (isSystemInDarkTheme()) Color.White else Color.Black,
+            backgroundColor = if (isSystemInDarkTheme()) Color.Black else Color.White
+        )
     )

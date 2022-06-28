@@ -62,7 +62,7 @@ fun AddDocumentScreenBody(navController: NavController, viewModel: DocumentsView
         var documentDesc by remember { mutableStateOf(TextFieldValue()) }
         val documentFamiliarizes = remember { mutableStateListOf<User>() }
         val documentAgreements = remember { mutableStateListOf<AgreementForm>() }
-        var isFamiliarizes by remember { mutableStateOf(false) }
+        var isFamiliarizes by remember { mutableStateOf(true) }
 
         var documentByteArray: ByteArray? by remember { mutableStateOf(null) }
         var fileDisplayName: String? by remember { mutableStateOf(null) }
@@ -101,6 +101,7 @@ fun AddDocumentScreenBody(navController: NavController, viewModel: DocumentsView
             LazyColumn(
                 Modifier
                     .fillMaxSize()
+                    .padding(it)
                     .padding(dimens.normalPadding),
                 horizontalAlignment = CenterHorizontally
             ) {

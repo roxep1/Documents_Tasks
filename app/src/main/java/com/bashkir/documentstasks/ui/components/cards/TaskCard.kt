@@ -10,11 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.bashkir.documentstasks.R
 import com.bashkir.documentstasks.data.models.Task
-import com.bashkir.documentstasks.ui.components.HandleFlingBehavior
 import com.bashkir.documentstasks.ui.components.loadingItem
 import com.bashkir.documentstasks.ui.components.views.PerformersView
 import com.bashkir.documentstasks.ui.theme.titleText
 import com.bashkir.documentstasks.utils.formatCutToString
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun TaskCardList(
@@ -24,13 +25,13 @@ fun TaskCardList(
     isLoading: Boolean,
     myId: String,
     onUpdate: () -> Unit
-) = LazyColumn(
-    modifier = modifier.fillMaxSize(),
-    flingBehavior = HandleFlingBehavior(onUpdate)
-) {
-    loadingItem(isLoading)
-    items(tasks) { task ->
-        TaskCard(task, task.author.id == myId) { onDetailsClick(task) }
+) = SwipeRefresh(state = rememberSwipeRefreshState(isLoading), onRefresh = onUpdate) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        items(tasks) { task ->
+            TaskCard(task, task.author.id == myId) { onDetailsClick(task) }
+        }
     }
 }
 
